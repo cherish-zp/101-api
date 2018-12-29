@@ -14,3 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+//Route::get('/swagger/', 'Api\SwaggerController@doc');
+Route::get('/swagger/json', 'Api\SwaggerController@getJSON');
+Route::get('/my-data', 'Api\SwaggerController@getMyData');

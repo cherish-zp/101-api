@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Http\Requests;
+
+use App\Models\User;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
+
+class UsersPost extends Base
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        $rules = [];
+        switch ($this->method()) {
+            case 'POST':
+                $actionMethod = $this->route()->getActionMethod();
+                if ($actionMethod == 'signUp') {
+                    $rules = [
+                        'mobile' => 'required|digits_between:5,20',
+                        'login_pass' => 'required|min:6|max:32',
+                    ];
+                }
+                if ($actionMethod == 'login') {
+                    $rules = [
+                        'mobile' => 'required|digits_between:5,20',
+                        'login_pass' => 'required|min:6|max:32',
+                    ];
+                }
+                if ($actionMethod == 'passwordReset') {
+                    $rules = [
+                        'mobile' => 'required|digits_between:5,20',
+                        'login_pass' => 'required|min:6|max:32',
+                    ];
+                }
+                break;
+        }
+        return $rules;
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'mobile.required' => '手机号不能为空.',
+            'login_pass.required'  => '密码不能为空.',
+            'mobile.digits_between'=>'手机号规则错误',
+            'login_pass.min'=>'密码规则错误.',
+            'login_pass.max'=>'密码规则错误.',
+        ];
+    }
+
+    protected function failedAuthorization()
+    {
+        throw new AuthenticationException('该帐号已被拉黑');
+    }
+
+}

@@ -167,7 +167,8 @@ return [
         /*
          * Package Service Providers...
          */
-
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+        Emadadly\LaravelUuid\LaravelUuidServiceProvider::class,
         /*
          * Application Service Providers...
          */
