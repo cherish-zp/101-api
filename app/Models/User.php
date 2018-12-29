@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -118,5 +119,39 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    /**
+     * 验证用户密码
+     * @param int $uid
+     * @param $password
+     * @return bool
+     */
+    public static function userPasswordIsCorrect(int $uid , $password) : bool
+    {
+        $login_pass = self::getUserPassword($uid);
+
+        return Hash::check($password, $login_pass) ? true : false;
+    }
+
+    /**
+     * 获取用户密码
+     * @param int $uid
+     * @return string
+     */
+    public static function getUserPassword(int $uid ) : string
+    {
+        return self::whereUserId($uid)->value('login_pass');
+    }
+
+    /**
+     * 更新密码
+     * @param $uid
+     * @param $password
+     * @return bool|int
+     */
+    public static function updatePassword($uid,$password)
+    {
+        return self::whereUserId($uid)->update(['login_pass'=>Hash::make($password)]);
     }
 }

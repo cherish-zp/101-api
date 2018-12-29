@@ -7,7 +7,16 @@ use App\Http\Controllers\Controller;
 
 class BaseController extends Controller
 {
-    protected function responseSuccess($data = [], $code = 200, $msg = 'success')
+    protected function responseSuccess($data = [],$code = 200, $msg = 'success')
+    {
+        return response()->json([
+            'message' => $msg,
+            'code' => $code,
+            'data' => $data,
+        ]);
+    }
+
+    protected function responseError($data = [],$code = 422, $msg = 'error')
     {
         return response()->json([
             'message' => $msg,

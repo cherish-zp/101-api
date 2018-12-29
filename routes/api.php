@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -13,18 +13,14 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::namespace('Api')->group(function($router) {
-
-    $router->post('login', 'AuthController@login');
-    $router->post('logout', 'AuthController@logout');
-    $router->post('signUp', 'AuthController@signUp',function (){
-        dd(11);
-    });
-    $router->post('me', 'AuthController@me');
-    $router->post('passwordReset', 'AuthController@passwordReset');
-
+Route::namespace('Api')->group(function() {
+    Route::post('signIn', 'AuthController@signIn');
+    Route::post('logout', 'AuthController@logout');
+    Route::post('signUp', 'AuthController@signUp');
+    Route::post('me', 'AuthController@me');
 });
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware(['jwt.api.auth','jwt.auth'])->namespace('Api')->group(function($router){
+    $router->post('passwordReset', 'AuthController@passwordReset');
+
 });

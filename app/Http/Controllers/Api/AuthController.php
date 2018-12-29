@@ -22,31 +22,56 @@ class AuthController extends BaseController
         // 这样的结果是，token 只能在有效期以内进行刷新，过期无法刷新
         // 如果把 refresh 也放进去，token 即使过期但仍在刷新期以内也可刷新
         // 不过刷新一次作废  auth:api
-        $this->middleware('jwt.auth', ['except' => ['login','signUp','passwordReset']]);
+        //$this->middleware('jwt.auth', ['except' => ['signIn','signUp','passwordReset']]);
         // 另外关于上面的中间件，官方文档写的是『auth:api』
         // 但是我推荐用 『jwt.auth』，效果是一样的，但是有更加丰富的报错信息返回
     }
     /**
-
+     ** @SWG\Post(
+     *     path="/signIn",
+     *     tags={"User"},
+     *     summary="登陆",
+     *     produces={"application/json"},
+     *   @SWG\Parameter(
+     *      in="query",
+     *      name="mobile",
+     *      type="string",
+     *      default="",
+     *      description="手机号",
+     *      required=true
+     *   ),
+     *   @SWG\Parameter(
+     *      in="query",
+     *      name="login_pass",
+     *      type="string",
+     *      default="",
+     *      description="密码",
+     *      required=true
+     *   ),
+     *   @SWG\Response(
+     *      response="200",
+     *      description="成功"
+     *   ),
+     *   @SWG\Response(
+     *      response="422",
+     *      description="验证失败"
+     *   ),
+     * )
      * @param UsersPost $request
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function login(UsersPost $request)
+    public function signIn(UsersPost $request)
     {
 
         $params = $request->validated();
-
         $user = User::where('mobile','=',$params['mobile'])->first();
 
-        if(Hash::check($request->input('login_pass'), $user->login_pass)){
+        if (User::userPasswordIsCorrect($user->user_id,$params['login_pass'])) {
             $token = JWTAuth::fromUser($user);
+        } else {
+            return $this->responseError([],422,'账号或者密码不正确');
         }
-
-        // 使用 Auth 登录用户，如果登录成功，则返回 201 的 code 和 token，如果登录失败则返回
-        /*if (! $token = auth('api')->attempt($attemptData)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }*/
 
         return $this->respondWithToken($token);
     }
@@ -59,65 +84,62 @@ class AuthController extends BaseController
     public function logout()
     {
         Auth::guard('api')->logout();
-
         return response(['message' => '退出成功']);
     }
 
     /**
-     * 注册
-     *
-     * * @SWG\Post(path="/signUp",
-     *   tags={"User"},
-     *   summary="注册",
-     *   produces={"application/json"},
+     * * @SWG\Post(
+     *     path="/signUp",
+     *     tags={"User"},
+     *     summary="注册",
+     *     produces={"application/json"},
      *     @SWG\Parameter(
-     *     in="query",
-     *     name="area_code",
-     *     type="string",
-     *     default="86",
-     *     description="区号",
-     *     required=true
+     *         in="query",
+     *         name="area_code",
+     *         type="string",
+     *         default="86",
+     *         description="区号",
+     *         required=true
      *   ),
      *     @SWG\Parameter(
-     *     in="query",
-     *     name="mobile",
-     *     type="string",
-     *     description="手机号",
-     *     required=true
+     *       in="query",
+     *       name="mobile",
+     *       type="string",
+     *       description="手机号",
+     *       required=true
      *   ),
      *   @SWG\Parameter(
-     *     in="query",
-     *     name="login_pass",
-     *     type="string",
-     *     format="string",
-     *     description="密码",
-     *     required=true,
+     *       in="query",
+     *       name="login_pass",
+     *       type="string",
+     *       format="string",
+     *       description="密码",
+     *       required=true,
      *   ),
      *    @SWG\Parameter(
-     *     in="query",
-     *     name="code",
-     *     type="string",
-     *     format="string",
-     *     description="验证码",
-     *     required=true
+     *       in="query",
+     *       name="code",
+     *       type="string",
+     *       format="string",
+     *       description="验证码",
+     *       required=true
      *   ),
      *    @SWG\Parameter(
-     *     in="query",
-     *     name="invite_code",
-     *     type="string",
-     *     format="string",
-     *     description="邀请码",
-     *     required=false
+     *       in="query",
+     *       name="invite_code",
+     *       type="string",
+     *       format="string",
+     *       description="邀请码",
+     *       required=false
      *   ),
      *   @SWG\Response(
-     *     response="200",
-     *     description="成功"
+     *      response="200",
+     *      description="成功"
      *   ),
      *   @SWG\Response(
-     *     response="422",
-     *     description="验证失败"
+     *      response="422",
+     *      description="验证失败"
      *   ),
-     *
      * )
      *
      * @param UsersPost $request
@@ -130,13 +152,6 @@ class AuthController extends BaseController
             'mobile' => $request->get('mobile'),
             'login_pass' => Hash::make($request->get('login_pass')),
         ];
-
-        //判断用户是否注册过
-        $user_id = User::where('mobile',$postUser['mobile'])->value('user_id');
-
-        if ($user_id) {
-            return $this->responseSuccess([],422,'此手机号已经注册过了');
-        }
 
         $user = User::create($postUser);
         $token = JWTAuth::fromUser($user);
@@ -162,6 +177,23 @@ class AuthController extends BaseController
      * Refresh a token.
      * 刷新token，如果开启黑名单，以前的token便会失效。
      * 值得注意的是用上面的getToken再获取一次Token并不算做刷新，两次获得的Token是并行的，即两个都可用。
+     *
+     ** @SWG\Post(
+     *      path="/refreshToken",
+     *      tags={"User"},
+     *      summary="刷新token",
+     *      produces={"application/json"},
+     *      security={{ "Bearer":{}}},
+     *      @SWG\Response(
+     *      response="200",
+     *      description="添加成功"
+     *   ),
+     *     @SWG\Response(
+     *      response="422",
+     *      description="验证失败"
+     *   ),
+     * )
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function refresh()
@@ -182,12 +214,17 @@ class AuthController extends BaseController
         ]);
     }
 
-    /**
-     * @param UsersPost $request
-     */
+
     public function passwordReset(UsersPost $request)
     {
-        $message = $request->messages();
-        dd($message);
+        $userId = JWTAuth::user()->user_id;
+        if (!User::userPasswordIsCorrect($userId,$request->post('login_pass_old'))) {
+            return $this->responseSuccess([],422,'密码错误');
+        }
+        //更新密码
+        if (!User::updatePassword($userId,$request->post('login_pass_new'))) {
+            return $this->responseError();
+        }
+        return $this->responseSuccess();
     }
 }

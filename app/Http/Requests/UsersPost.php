@@ -7,6 +7,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\Rule;
 
 class UsersPost extends Base
 {
@@ -33,11 +34,11 @@ class UsersPost extends Base
                 $actionMethod = $this->route()->getActionMethod();
                 if ($actionMethod == 'signUp') {
                     $rules = [
-                        'mobile' => 'required|digits_between:5,20',
+                        'mobile' => 'required|digits_between:5,20|unique:user,mobile',
                         'login_pass' => 'required|min:6|max:32',
                     ];
                 }
-                if ($actionMethod == 'login') {
+                if ($actionMethod == 'signIn') {
                     $rules = [
                         'mobile' => 'required|digits_between:5,20',
                         'login_pass' => 'required|min:6|max:32',
@@ -45,14 +46,16 @@ class UsersPost extends Base
                 }
                 if ($actionMethod == 'passwordReset') {
                     $rules = [
-                        'mobile' => 'required|digits_between:5,20',
-                        'login_pass' => 'required|min:6|max:32',
+                        'login_pass_old' => 'required|min:6|max:32',
+                        'login_pass_new' =>  ['required','min:6','max:32'],
                     ];
                 }
                 break;
         }
         return $rules;
     }
+
+
 
     /**
      * Get the error messages for the defined validation rules.
@@ -63,6 +66,7 @@ class UsersPost extends Base
     {
         return [
             'mobile.required' => '手机号不能为空.',
+            'mobile.unique' => '手机号已被注册.',
             'login_pass.required'  => '密码不能为空.',
             'mobile.digits_between'=>'手机号规则错误',
             'login_pass.min'=>'密码规则错误.',
