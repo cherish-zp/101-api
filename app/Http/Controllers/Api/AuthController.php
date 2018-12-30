@@ -63,14 +63,14 @@ class AuthController extends BaseController
 
     public function signIn(UsersPost $request)
     {
-
+        //phpinfo();
         $params = $request->validated();
         $user = User::where('mobile','=',$params['mobile'])->first();
 
         if (User::userPasswordIsCorrect($user->user_id,$params['login_pass'])) {
             $token = JWTAuth::fromUser($user);
         } else {
-            return $this->responseError([],422,'账号或者密码不正确');
+            return $this->error([],422,'账号或者密码不正确');
         }
 
         return $this->respondWithToken($token);
@@ -156,21 +156,23 @@ class AuthController extends BaseController
         $user = User::create($postUser);
         $token = JWTAuth::fromUser($user);
 
-        return $this->responseSuccess([
+        return $this->success([
             'token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL()
         ]);
 
     }
-    /**
+    /** userInfo
      * Get the authenticated User.
      *
      * @return \Illuminate\Http\JsonResponse
      */
     public function me()
     {
-        return response()->json(auth('api')->user());
+        $user = auth('api')->user();
+        return  $this->success($user);
+        //return response()->json(auth('api')->user());
     }
 
     /**
@@ -207,7 +209,7 @@ class AuthController extends BaseController
      */
     protected function respondWithToken($token)
     {
-        return $this->responseSuccess([
+        return $this->success([
             'token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL()
@@ -219,12 +221,12 @@ class AuthController extends BaseController
     {
         $userId = JWTAuth::user()->user_id;
         if (!User::userPasswordIsCorrect($userId,$request->post('login_pass_old'))) {
-            return $this->responseSuccess([],422,'密码错误');
+            return $this->success([],422,'密码错误');
         }
         //更新密码
         if (!User::updatePassword($userId,$request->post('login_pass_new'))) {
-            return $this->responseError();
+            return $this->error();
         }
-        return $this->responseSuccess();
+        return $this->success();
     }
 }

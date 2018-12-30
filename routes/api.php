@@ -14,13 +14,19 @@
 */
 
 Route::namespace('Api')->group(function() {
+
     Route::post('signIn', 'AuthController@signIn');
     Route::post('logout', 'AuthController@logout');
     Route::post('signUp', 'AuthController@signUp');
-    Route::post('me', 'AuthController@me');
+
+    //banner
+    Route::post('banner','BannerController@index');
 });
 
-Route::middleware(['jwt.api.auth','jwt.auth'])->namespace('Api')->group(function($router){
-    $router->post('passwordReset', 'AuthController@passwordReset');
+Route::middleware(['jwt.api.auth','jwt.auth'])->namespace('Api')->group(function(){
+    //修改密码
+    Route::post('passwordReset', 'AuthController@passwordReset');
+    //用户资产
+    Route::post('userInfo', 'AuthController@me');
 
 });

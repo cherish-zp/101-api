@@ -86,14 +86,9 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'remember_token',
+        'remember_token','private_key','public_key','user_id',
     ];
-    /**
-     * 模型中日期字段的存储格式
-     *
-     * @var string
-     */
-    //protected $dateFormat = 'U';
+
     /**
      * @var bool
      */
