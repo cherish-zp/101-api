@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\UsersPost;
 use App\Models\User;
+use App\Models\UserInvite;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Request;
@@ -26,6 +27,7 @@ class AuthController extends BaseController
         // 另外关于上面的中间件，官方文档写的是『auth:api』
         // 但是我推荐用 『jwt.auth』，效果是一样的，但是有更加丰富的报错信息返回
     }
+
     /**
      ** @SWG\Post(
      *     path="/signIn",
@@ -65,12 +67,12 @@ class AuthController extends BaseController
     {
         //phpinfo();
         $params = $request->validated();
-        $user = User::where('mobile','=',$params['mobile'])->first();
+        $user = User::where('mobile', '=', $params['mobile'])->first();
 
-        if (User::userPasswordIsCorrect($user->user_id,$params['login_pass'])) {
+        if (User::userPasswordIsCorrect($user->user_id, $params['login_pass'])) {
             $token = JWTAuth::fromUser($user);
         } else {
-            return $this->error([],422,'账号或者密码不正确');
+            return $this->error([], 422, '账号或者密码不正确');
         }
 
         return $this->respondWithToken($token);
@@ -151,9 +153,17 @@ class AuthController extends BaseController
             'area_code' => $request->get('area_code', 86),
             'mobile' => $request->get('mobile'),
             'login_pass' => Hash::make($request->get('login_pass')),
+            'invite_code' => User::createUserInviteCode(),
         ];
-
+        if ($request->filled('invite_code')) {
+            $inviteUserId = User::getInviteUserIdByInviteCode($request->get('invite_code'));
+            if ($inviteUserId) {
+                $postUser['invite_uid'] = $inviteUserId;
+                $postUser['invite_code'] = $request->get('invite_code');
+            }
+        }
         $user = User::create($postUser);
+        UserInvite::updateUserInviteByUserId($user->user_id);
         $token = JWTAuth::fromUser($user);
 
         return $this->success([
@@ -163,6 +173,7 @@ class AuthController extends BaseController
         ]);
 
     }
+
     /** userInfo
      * Get the authenticated User.
      *
@@ -171,7 +182,7 @@ class AuthController extends BaseController
     public function me()
     {
         $user = auth('api')->user();
-        return  $this->success($user);
+        return $this->success($user);
         //return response()->json(auth('api')->user());
     }
 
@@ -220,11 +231,11 @@ class AuthController extends BaseController
     public function passwordReset(UsersPost $request)
     {
         $userId = JWTAuth::user()->user_id;
-        if (!User::userPasswordIsCorrect($userId,$request->post('login_pass_old'))) {
-            return $this->success([],422,'密码错误');
+        if (!User::userPasswordIsCorrect($userId, $request->post('login_pass_old'))) {
+            return $this->success([], 422, '密码错误');
         }
         //更新密码
-        if (!User::updatePassword($userId,$request->post('login_pass_new'))) {
+        if (!User::updatePassword($userId, $request->post('login_pass_new'))) {
             return $this->error();
         }
         return $this->success();

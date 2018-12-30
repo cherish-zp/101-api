@@ -54,10 +54,16 @@ use Emadadly\LaravelUuid\Uuids;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUuid($value)
+ * @property string|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereDeletedAt($value)
+ * @property int $invite_uid 邀请用户id
+ * @property string $invite_code 邀请码
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereInviteCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereInviteUid($value)
  */
 class User extends Authenticatable implements JWTSubject
 {
-    use Uuids,Notifiable;
+    use Uuids, Notifiable;
 
     /**
      * Indicates if the IDs are auto-incrementing.
@@ -77,7 +83,7 @@ class User extends Authenticatable implements JWTSubject
      */
 
     protected $fillable = [
-        'mobile', 'login_pass','pay_pass','reg_time','amount',
+        'mobile', 'login_pass', 'pay_pass', 'reg_time', 'amount',
     ];
     protected $primaryKey = 'user_id';
     /**
@@ -86,7 +92,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'remember_token','private_key','public_key','user_id',
+        'remember_token', 'private_key', 'public_key', 'user_id',
     ];
 
     /**
@@ -122,7 +128,7 @@ class User extends Authenticatable implements JWTSubject
      * @param $password
      * @return bool
      */
-    public static function userPasswordIsCorrect(int $uid , $password) : bool
+    public static function userPasswordIsCorrect(int $uid, $password): bool
     {
         $login_pass = self::getUserPassword($uid);
 
@@ -134,7 +140,7 @@ class User extends Authenticatable implements JWTSubject
      * @param int $uid
      * @return string
      */
-    public static function getUserPassword(int $uid ) : string
+    public static function getUserPassword(int $uid): string
     {
         return self::whereUserId($uid)->value('login_pass');
     }
@@ -145,8 +151,40 @@ class User extends Authenticatable implements JWTSubject
      * @param $password
      * @return bool|int
      */
-    public static function updatePassword($uid,$password)
+    public static function updatePassword($uid, $password)
     {
-        return self::whereUserId($uid)->update(['login_pass'=>Hash::make($password)]);
+        return self::whereUserId($uid)->update(['login_pass' => Hash::make($password)]);
+    }
+
+    /**
+     * 通过邀请码获取邀请人uid
+     * @param $invite_code
+     * @return mixed
+     */
+    public static function getInviteUserIdByInviteCode($inviteCode)
+    {
+        return self::whereInviteCode($inviteCode)->value('user_id');
+    }
+
+
+
+    /**
+     * 通过uid获取邀请人uid
+     * @param $invite_code
+     * @return mixed
+     */
+    public static function getInviteUserIdByUid($inviteUid)
+    {
+        return self::whereInvateUid($inviteUid)->value('invite_uid');
+    }
+
+    public static function createUserInviteCode()
+    {
+        $inviteCode = createInviteCode(8);
+        $inviteUserId = User::getInviteUserId($inviteCode);
+        if ($inviteUserId) {
+            self::createUserInviteCode();
+        }
+        return $inviteCode;
     }
 }

@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\Config;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Banner whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Banner whereTitle($value)
  * @mixin \Eloquent
+ * @property string|null $deleted_at 删除时间
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Banner whereDeletedAt($value)
  */
 class Banner extends Base
 {

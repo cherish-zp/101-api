@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.5.44 on 2018-12-28 08:08:35.
+ * Generated for Laravel 5.5.44 on 2018-12-30 16:38:24.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -1669,7 +1669,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the currently authenticated user.
          *
-         * @return \App\User|null 
+         * @return \App\Models\User|null 
          * @static 
          */ 
         public static function user()
@@ -1681,7 +1681,7 @@ namespace Illuminate\Support\Facades {
          * Get the currently authenticated user or throws an exception.
          *
          * @throws \Tymon\JWTAuth\Exceptions\UserNotDefinedException
-         * @return \App\User 
+         * @return \App\Models\User 
          * @static 
          */ 
         public static function userOrFail()
@@ -1895,7 +1895,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Return the currently cached user.
          *
-         * @return \App\User|null 
+         * @return \App\Models\User|null 
          * @static 
          */ 
         public static function getUser()
@@ -1929,7 +1929,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the last user we attempted to authenticate.
          *
-         * @return \App\User 
+         * @return \App\Models\User 
          * @static 
          */ 
         public static function getLastAttempted()
@@ -1940,7 +1940,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Determine if the current user is authenticated.
          *
-         * @return \App\User 
+         * @return \App\Models\User 
          * @throws \Illuminate\Auth\AuthenticationException
          * @static 
          */ 

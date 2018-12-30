@@ -28,7 +28,7 @@ class SystemSetting extends Base
 {
     protected $table = 'system_setting';
 
-    public function getFieldValue(string  $field) : string
+    public static function getFieldValue(string  $field) : string
     {
         return self::whereKey($field)->value('value');
     }
