@@ -22,26 +22,26 @@ class UserTokenAuth
         try {
             if (! $user = JWTAuth::parseToken()->authenticate()) {
                 return response()->json([
-                    'code' => -200,
+                    'code' => 422,
                     'msg' => 'user not found'
                 ]);
             }
         } catch (TokenExpiredException $e) {
 
             return response()->json([
-                'code' => -200,
+                'code' => 422,
                 'msg' => 'token 失效',
                 'm'=> $e->getMessage()
             ]);
         } catch (TokenInvalidException $e) {
             return response()->json([
-                'code' => -200,
+                'code' => 422,
                 'msg' => 'token 无效',
                 'm'=> $e->getMessage()
             ]);
         } catch (JWTException $e) {
             return response()->json([
-                'code' => -200,
+                'code' => 422,
                 'msg' => 'token 异常',
                 'm'=>$e->getMessage()
             ]);
