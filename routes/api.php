@@ -13,14 +13,19 @@
 |
 */
 
+
 Route::namespace('Api')->group(function() {
 
     Route::post('signIn', 'AuthController@signIn');
     Route::post('logout', 'AuthController@logout');
     Route::post('signUp', 'AuthController@signUp');
-
+    //验证码
+    Route::post('captcha/sms', 'CaptchaController@sms');
+    Route::post('sendMessage', 'sendMessageController@index');
     //banner
     Route::post('banner','BannerController@index');
+    //忘记密码
+    Route::post('forgetPassword', 'AuthController@forgetPassword');
 });
 
 Route::middleware(['jwt.api.auth','jwt.auth'])->namespace('Api')->group(function(){

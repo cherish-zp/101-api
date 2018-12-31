@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\UsersPost;
+use App\Models\Captcha;
 use App\Models\User;
 use App\Models\UserInvite;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Request;
@@ -244,7 +246,32 @@ class AuthController extends BaseController
         //更新密码
         if (!User::updatePassword($userId, $request->post('login_pass_new'))) {
             return $this->error();
+               return $this->success();
+        }
+    }
+
+    /**
+     * 忘记密码
+     * @param UsersPost $request
+     */
+    public function forgetPassword(UsersPost $request)
+    {
+        $mobile = $request->mobile;
+        $type = 'reset_pwd';
+        $code = $request->code;
+
+        if (!User::judgeUserIdExistByMobile($mobile)) {
+            return $this->error([],422,'用户不存在');
+        }
+
+        if (!Captcha::VerifySms($mobile,$code,$type)) {
+            return $this->error([],422,'验证码错误');
+        }
+        //更新用户密码
+        if (!User::updatePasswordByMobile($mobile,$request->login_pass)) {
+            return $this->error([],422,'密码更新失败!');
         }
         return $this->success();
+
     }
 }

@@ -50,6 +50,13 @@ class UsersPost extends Base
                         'login_pass_new' =>  ['required','min:6','max:32'],
                     ];
                 }
+                if ($actionMethod == 'forgetPassword') {
+                    $rules = [
+                        'mobile' => 'required|digits_between:5,20',
+                        'login_pass'=>'required|min:6|max:32',
+                        'code'=>'required'
+                    ];
+                }
                 break;
         }
         return $rules;

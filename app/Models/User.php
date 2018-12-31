@@ -191,4 +191,24 @@ class User extends Authenticatable implements JWTSubject
         return self::where($where)->first($fileds);
 
     }
+
+    /**
+     * @paramobile
+     * @return bool
+     */
+    public  static function judgeUserIdExistByMobile($mobile) : bool
+    {
+        return self::whereMobile($mobile)->value('user_id') ? true : false;
+    }
+
+    /**
+     * 更新用户密码
+     * @param $mobile
+     * @param $password
+     * @return bool
+     */
+    public static function updatePasswordByMobile($mobile,$password) : bool
+    {
+        return self::whereMobile($mobile)->update(['login_pass'=>Hash::make($password)]) ? true : false;
+    }
 }
