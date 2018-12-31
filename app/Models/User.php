@@ -58,6 +58,8 @@ use Emadadly\LaravelUuid\Uuids;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUuid($value)
  * @mixin \Eloquent
+ * @property int $status 1=正常|2=禁用
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereStatus($value)
  */
 class User extends Authenticatable implements JWTSubject
 {

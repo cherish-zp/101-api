@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Emadadly\LaravelUuid\Uuids;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\Models\UserInvite
@@ -24,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite whereUuid($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite uuid($uuid, $first = true)
  */
 class UserInvite extends Base
 {
@@ -39,7 +39,8 @@ class UserInvite extends Base
 
     /**
      * 更新用户邀请关系
-     * @param $uuId
+     * @param $uuid
+     * @throws \Exception
      */
     public static function updateUserInviteByUserId($uuid)
     {
@@ -65,9 +66,10 @@ class UserInvite extends Base
 
     /**
      * 设置用户邀请关系
-     * @param $uuId
+     * @param $inviteUserId
      * @param $level
-     * @param $currentUid
+     * @param $userId
+     * @throws \Exception
      */
     public static function setInviteByUid($inviteUserId, $level, $userId)
     {
@@ -79,7 +81,7 @@ class UserInvite extends Base
             $inviteData = [
                 'uid' => $inviteUserId,
                 'level' => $level,
-                'uiddadas' => $userId,
+                'uids' => $userId,
             ];
             $result = self::create($inviteData);
         }

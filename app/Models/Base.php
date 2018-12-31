@@ -23,12 +23,13 @@ class Base extends Model
     /**
      * @var bool
      */
-    public $incrementing = false;
+    //public $incrementing = true;
 
     /**
      * 模型中日期字段的存储格式
      *
      * @var string
      */
-    protected $dateFormat = 'U';
+    //protected $dateFormat = 'U';
+    
 }
