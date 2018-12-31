@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Emadadly\LaravelUuid\Uuids;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -26,39 +27,54 @@ use Illuminate\Database\Eloquent\Model;
  */
 class UserInvite extends Base
 {
+    use Uuids;
+
+    public $incrementing = false;
     //
     protected $table = 'user_invite';
 
+    protected $guarded = [];
 
     /**
      * 更新用户邀请关系
-     * @param $userId
+     * @param $uuId
      */
-    public static function updateUserInviteByUserId($userId)
+    public static function updateUserInviteByUserId($uuid)
     {
         $maxLevel = SystemSetting::getFieldValue('recommend_get_max_level');
-        $nowLevel = 1;
-        $inviteUserId = User::getInviteUserIdByUid($userId);
-        while ($inviteUserId) {
+        static $nowLevel = 1;
+        $user = User::getUserInfo(['uuid' => $uuid], ['user_id', 'invite_uid']);
+        while ($user->invite_uid) {
             if ($nowLevel <= $maxLevel) {
-                self::setInviteByUid($inviteUserId, $nowLevel, $userId);
+                self::setInviteByUid($user->invite_uid, $nowLevel, $user->user_id);
                 $nowLevel++;
-                self::updateUserInviteByUserId($inviteUserId);
+                $inviteUser = User::getUserInfo(['user_id' => $user->invite_uid], ['uuid', 'user_id', 'invite_uid']);
+                if ($inviteUser->invite_uid) {
+                    self::updateUserInviteByUserId($inviteUser->uuid);
+                }
             }
         }
-
     }
 
     /**
      * 设置用户邀请关系
-     * @param $uid
+     * @param $uuId
      * @param $level
      * @param $currentUid
      */
-    public static function setInviteByUid($uid, $level, $currentUid)
+    public static function setInviteByUid($inviteUserId, $level, $userId)
     {
-        $inviteData = self::whereUid($uid)->whereLevel($level)->first();
-        $newData['uids'] = $inviteData['uids'] . '|' . $currentUid;
-        self::where('uuid', $inviteData['uuid'])->update($newData);
+        $inviteData = self::whereUid($inviteUserId)->whereLevel($level)->first();
+        if ($inviteData) {
+            $newData['uids'] = $inviteData['uids'] . '|' . $userId;
+            self::where('uuid', $inviteData['uuid'])->update($newData);
+        } else {
+            $inviteData = [
+                'uid' => $inviteUserId,
+                'level' => $level,
+                'uids' => $userId,
+            ];
+            self::create($inviteData);
+        }
     }
 }

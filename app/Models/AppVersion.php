@@ -33,6 +33,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion whereVersion($value)
  * @mixin \Eloquent
+ * @property string|null $deleted_at 删除时间
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion whereDeletedAt($value)
  */
 class AppVersion extends Model
 {

@@ -149,6 +149,7 @@ class AuthController extends BaseController
      */
     public function signUp(UsersPost $request)
     {
+
         $postUser = [
             'area_code' => $request->get('area_code', 86),
             'mobile' => $request->get('mobile'),
@@ -156,14 +157,14 @@ class AuthController extends BaseController
             'invite_code' => User::createUserInviteCode(),
         ];
         if ($request->filled('invite_code')) {
-            $inviteUserId = User::getInviteUserIdByInviteCode($request->get('invite_code'));
+            $inviteUserId = User::getInviteUserIdByInviteCode($request->invite_code);
             if ($inviteUserId) {
                 $postUser['invite_uid'] = $inviteUserId;
-                $postUser['invite_code'] = $request->get('invite_code');
             }
         }
+
         $user = User::create($postUser);
-        UserInvite::updateUserInviteByUserId($user->user_id);
+        UserInvite::updateUserInviteByUserId($user->uuid);
         $token = JWTAuth::fromUser($user);
 
         return $this->success([

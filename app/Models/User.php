@@ -12,12 +12,6 @@ use Emadadly\LaravelUuid\Uuids;
 /**
  * App\Models\User
  *
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User uuid($uuid, $first = true)
- * @mixin \Eloquent
  * @property string $uuid 唯一约束
  * @property int $user_id 用户id
  * @property string $mobile 手机号
@@ -27,20 +21,29 @@ use Emadadly\LaravelUuid\Uuids;
  * @property string $login_pass 密码
  * @property string $pay_pass 支付密码
  * @property int $is_out 1:未出局 2 : 出局
- * @property int $invate_uid 邀请用户id
+ * @property int $invite_uid 邀请用户id
+ * @property string $invite_code 邀请码
  * @property string $private_key 私钥
  * @property string $public_key 公钥
  * @property string $mnemonic 助记词
  * @property int $is_queued 1=已排队|2=未排队
  * @property float $dynamic_freed 动态释放数量 [伞下人员释放数量]
  * @property float $static_freeed 静态释放数量 [个人释放数量]
- * @property string $created_at 创建时间
- * @property string $updated_at 更新时间
+ * @property \Illuminate\Support\Carbon $created_at 创建时间
+ * @property \Illuminate\Support\Carbon $updated_at 更新时间
+ * @property string|null $deleted_at 删除时间
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User uuid($uuid, $first = true)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereCashNum($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereDynamicFreed($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereInvateUid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereInvestNum($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereInviteCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereInviteUid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereIsOut($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereIsQueued($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereLevel($value)
@@ -54,12 +57,7 @@ use Emadadly\LaravelUuid\Uuids;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUuid($value)
- * @property string|null $deleted_at
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereDeletedAt($value)
- * @property int $invite_uid 邀请用户id
- * @property string $invite_code 邀请码
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereInviteCode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereInviteUid($value)
+ * @mixin \Eloquent
  */
 class User extends Authenticatable implements JWTSubject
 {
@@ -83,7 +81,7 @@ class User extends Authenticatable implements JWTSubject
      */
 
     protected $fillable = [
-        'mobile', 'login_pass', 'pay_pass', 'reg_time', 'amount',
+        'mobile', 'login_pass', 'pay_pass', 'reg_time', 'amount', 'invite_code', 'invite_uid',
     ];
     protected $primaryKey = 'user_id';
     /**
@@ -92,7 +90,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'remember_token', 'private_key', 'public_key', 'user_id',
+        'remember_token', 'private_key', 'public_key',
     ];
 
     /**
@@ -163,28 +161,32 @@ class User extends Authenticatable implements JWTSubject
      */
     public static function getInviteUserIdByInviteCode($inviteCode)
     {
-        return self::whereInviteCode($inviteCode)->value('user_id');
+        $inviteUser = self::getUserInfo(['invite_code' => $inviteCode], ['user_id']);
+        if ($inviteUser) {
+            return $inviteUser->user_id;
+        }
     }
 
-
-
-    /**
-     * 通过uid获取邀请人uid
-     * @param $invite_code
-     * @return mixed
-     */
-    public static function getInviteUserIdByUid($inviteUid)
-    {
-        return self::whereInvateUid($inviteUid)->value('invite_uid');
-    }
 
     public static function createUserInviteCode()
     {
         $inviteCode = createInviteCode(8);
-        $inviteUserId = User::getInviteUserId($inviteCode);
+        $inviteUserId = User::getInviteUserIdByInviteCode($inviteCode);
         if ($inviteUserId) {
             self::createUserInviteCode();
         }
         return $inviteCode;
+    }
+
+    /**
+     * 获取用户信息
+     * @param array $where
+     * @param array $fileds
+     * @return User|\Illuminate\Database\Eloquent\Model|object|null
+     */
+    public static function getUserInfo(array $where, array $fileds = [])
+    {
+        return self::where($where)->first($fileds);
+
     }
 }

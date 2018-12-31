@@ -23,13 +23,15 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SystemSetting whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SystemSetting whereValue($value)
  * @mixin \Eloquent
+ * @property string $name 键
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SystemSetting whereName($value)
  */
 class SystemSetting extends Base
 {
     protected $table = 'system_setting';
 
-    public static function getFieldValue(string  $field) : string
+    public static function getFieldValue(string $field)
     {
-        return self::whereKey($field)->value('value');
+        return self::whereName($field)->value('value');
     }
 }
