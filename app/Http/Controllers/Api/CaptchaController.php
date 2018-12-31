@@ -18,7 +18,7 @@ class CaptchaController extends BaseController
      *   summary="发送短信验证码",
      *   produces={"application/json"},
      *   security={{ "Bearer":{}}},
-     *   description="类型：signup=注册，reset_pwd=重置密码，reset_pay_pwd=找回支付密码, coin=增加提币地址, mention=提币  <br />说明：在登录的状态可以不填写区号和手机号 <br> 测试验证码固定888888",
+     *   description="类型：signup=注册，reset_pwd=忘记密码，reset_pay_pwd=找回支付密码, coin=增加提币地址, mention=提币  <br />说明：在登录的状态可以不填写区号和手机号 <br> 测试验证码固定888888",
      *     @SWG\Parameter(
      *     in="query",
      *     name="mobile",
