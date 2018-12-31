@@ -6,6 +6,7 @@ use App\Http\Requests\UsersPost;
 use App\Models\User;
 use App\Models\UserInvite;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -149,29 +150,34 @@ class AuthController extends BaseController
      */
     public function signUp(UsersPost $request)
     {
-
-        $postUser = [
-            'area_code' => $request->get('area_code', 86),
-            'mobile' => $request->get('mobile'),
-            'login_pass' => Hash::make($request->get('login_pass')),
-            'invite_code' => User::createUserInviteCode(),
-        ];
-        if ($request->filled('invite_code')) {
-            $inviteUserId = User::getInviteUserIdByInviteCode($request->invite_code);
-            if ($inviteUserId) {
-                $postUser['invite_uid'] = $inviteUserId;
+        try {
+            DB::beginTransaction();
+            $postUser = [
+                'area_code' => $request->get('area_code', 86),
+                'mobile' => $request->get('mobile'),
+                'login_pass' => Hash::make($request->get('login_pass')),
+                'invite_code' => User::createUserInviteCode(),
+            ];
+            if ($request->filled('invite_code')) {
+                $inviteUserId = User::getInviteUserIdByInviteCode($request->invite_code);
+                if ($inviteUserId) {
+                    $postUser['invite_uid'] = $inviteUserId;
+                }
             }
+
+            $user = User::create($postUser);
+            UserInvite::updateUserInviteByUserId($user->uuid);
+            $token = JWTAuth::fromUser($user);
+            DB::commit();
+            return $this->success([
+                'token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => auth('api')->factory()->getTTL()
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->error([], 422, $e->getMessage());
         }
-
-        $user = User::create($postUser);
-        UserInvite::updateUserInviteByUserId($user->uuid);
-        $token = JWTAuth::fromUser($user);
-
-        return $this->success([
-            'token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL()
-        ]);
 
     }
 

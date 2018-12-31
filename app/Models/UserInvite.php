@@ -35,6 +35,8 @@ class UserInvite extends Base
 
     protected $guarded = [];
 
+    static $regUserId = '';
+
     /**
      * 更新用户邀请关系
      * @param $uuId
@@ -43,16 +45,21 @@ class UserInvite extends Base
     {
         $maxLevel = SystemSetting::getFieldValue('recommend_get_max_level');
         static $nowLevel = 1;
-        $user = User::getUserInfo(['uuid' => $uuid], ['user_id', 'invite_uid']);
-        while ($user->invite_uid) {
-            if ($nowLevel <= $maxLevel) {
-                self::setInviteByUid($user->invite_uid, $nowLevel, $user->user_id);
-                $nowLevel++;
+        if ($nowLevel <= $maxLevel) {
+            $inviteUser = [];
+            $user = User::getUserInfo(['uuid' => $uuid], ['user_id', 'invite_uid']);
+            if ($user->invite_uid) {
+                if ($nowLevel == 1) {
+                    self::$regUserId = $user->user_id;
+                }
+                self::setInviteByUid($user->invite_uid, $nowLevel, self::$regUserId);
                 $inviteUser = User::getUserInfo(['user_id' => $user->invite_uid], ['uuid', 'user_id', 'invite_uid']);
                 if ($inviteUser->invite_uid) {
+                    $nowLevel++;
                     self::updateUserInviteByUserId($inviteUser->uuid);
                 }
             }
+
         }
     }
 
@@ -67,14 +74,17 @@ class UserInvite extends Base
         $inviteData = self::whereUid($inviteUserId)->whereLevel($level)->first();
         if ($inviteData) {
             $newData['uids'] = $inviteData['uids'] . '|' . $userId;
-            self::where('uuid', $inviteData['uuid'])->update($newData);
+            $result = self::where('uuid', $inviteData['uuid'])->update($newData);
         } else {
             $inviteData = [
                 'uid' => $inviteUserId,
                 'level' => $level,
-                'uids' => $userId,
+                'uiddadas' => $userId,
             ];
-            self::create($inviteData);
+            $result = self::create($inviteData);
         }
+        if (!$result)
+            throw new \Exception('邀请关系更新失败');
+
     }
 }

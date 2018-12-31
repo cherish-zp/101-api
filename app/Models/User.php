@@ -162,17 +162,17 @@ class User extends Authenticatable implements JWTSubject
     public static function getInviteUserIdByInviteCode($inviteCode)
     {
         $inviteUser = self::getUserInfo(['invite_code' => $inviteCode], ['user_id']);
-        if ($inviteUser) {
-            return $inviteUser->user_id;
-        }
+        if (!$inviteUser)
+            throw new \Exception('邀请码无效');
+        return $inviteUser->user_id;
     }
 
 
     public static function createUserInviteCode()
     {
         $inviteCode = createInviteCode(8);
-        $inviteUserId = User::getInviteUserIdByInviteCode($inviteCode);
-        if ($inviteUserId) {
+        $inviteUser = self::getUserInfo(['invite_code' => $inviteCode], ['user_id']);
+        if ($inviteUser) {
             self::createUserInviteCode();
         }
         return $inviteCode;
