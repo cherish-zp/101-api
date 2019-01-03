@@ -103,6 +103,22 @@ class User extends Authenticatable implements JWTSubject
     public $timestamps = true;
 
     // Rest omitted for brevity
+    /**
+     * @var int 已出局
+     */
+    public static $isOutYes = 1;
+    /**
+     * @var int 未出局
+     */
+    public static $isOutNo = 2;
+    /**
+     * @var int 已进场
+     */
+    public static $isQueuedYes = 1;
+    /**
+     * @var int 未进场
+     */
+    public static $isQueuedNo = 2;
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
@@ -214,4 +230,28 @@ class User extends Authenticatable implements JWTSubject
     {
         return self::whereMobile($mobile)->update(['login_pass'=>Hash::make($password)]) ? true : false;
     }
+
+    /**
+     * 判断用户是否出局
+     * @param $userId
+     * @return bool
+     */
+    public static function isOut($userId)
+    {
+        $isOut = self::whereUserId($userId)->value('is_out');
+        return  $isOut == self::$isOutYes ? true : false;
+    }
+
+    /**
+     * 判断用户是否进场
+     * @param $userId
+     * @return bool
+     */
+    public function isQueued($userId)
+    {
+        $isQueued = self::whereUId($userId)->value('is_queued');
+        return  $isQueued == self::$isQueuedYes ? true : false;
+    }
+
+
 }

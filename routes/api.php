@@ -33,8 +33,10 @@ Route::middleware(['jwt.api.auth','jwt.auth'])->namespace('Api')->group(function
     Route::post('passwordReset', 'AuthController@passwordReset');
     //用户资产
     Route::post('userInfo', 'AuthController@me');
+    //用户排队
+    Route::post('queue', 'EnterController@queue');
     //用户进场
-    Route::post('enter', 'userEnterController@enter');
+    Route::post('enter', 'EnterController@enter');
     //积分复投
     Route::post('repeat','RepeatController@integralRepeat');
 });
