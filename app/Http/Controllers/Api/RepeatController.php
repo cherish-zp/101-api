@@ -6,22 +6,20 @@ use App\Http\Requests\IntegerRepeatRequest;
 use App\Models\CoinRepeat;
 use App\Models\SystemSetting;
 use App\Models\UserAssets;
-use Illuminate\Http\Request;
 
 /**
- * Class RepeatController
- * @package App\Http\Controllers\Api
+ * Class RepeatController.
  */
 class RepeatController extends BaseController
 {
     /**
      * @param IntegerRepeatRequest $integerRepeatRequest
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function integralRepeat(IntegerRepeatRequest $integerRepeatRequest)
     {
         try {
-
             $userId = \JWTAuth::user()->user_id;
             //积分币种名称
             $integralCoinName = SystemSetting::getFieldValue(SystemSetting::$integralCoinName);
@@ -30,12 +28,9 @@ class RepeatController extends BaseController
             //用户资产币种
             //$userAssets = UserAssets::getUserAssetsUserIdAndCoinName($userId,$assetsCoinName);
 
-            CoinRepeat::integralRepeat($userId,$integerRepeatRequest->integral);
-
+            CoinRepeat::integralRepeat($userId, $integerRepeatRequest->integral);
         } catch (\Exception $e) {
-
-            return $this->error([],422,$e->getMessage());
+            return $this->error([], 422, $e->getMessage());
         }
-
     }
 }

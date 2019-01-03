@@ -5,7 +5,7 @@ namespace App\Models;
 use Emadadly\LaravelUuid\Uuids;
 
 /**
- * App\Models\UserInvite
+ * App\Models\UserInvite.
  *
  * @property string $uuid uuid
  * @property int $uid 用户id
@@ -13,6 +13,7 @@ use Emadadly\LaravelUuid\Uuids;
  * @property string $uids 伞下人员
  * @property \Illuminate\Support\Carbon $created_at 创建时间
  * @property \Illuminate\Support\Carbon $updated_at 更新时间
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite query()
@@ -23,6 +24,7 @@ use Emadadly\LaravelUuid\Uuids;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite whereUuid($value)
  * @mixin \Eloquent
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite uuid($uuid, $first = true)
  */
 class UserInvite extends Base
@@ -35,11 +37,13 @@ class UserInvite extends Base
 
     protected $guarded = [];
 
-    static $regUserId = '';
+    public static $regUserId = '';
 
     /**
-     * 更新用户邀请关系
+     * 更新用户邀请关系.
+     *
      * @param $uuid
+     *
      * @throws \Exception
      */
     public static function updateUserInviteByUserId($uuid)
@@ -60,33 +64,34 @@ class UserInvite extends Base
                     self::updateUserInviteByUserId($inviteUser->uuid);
                 }
             }
-
         }
     }
 
     /**
-     * 设置用户邀请关系
+     * 设置用户邀请关系.
+     *
      * @param $inviteUserId
      * @param $level
      * @param $userId
+     *
      * @throws \Exception
      */
     public static function setInviteByUid($inviteUserId, $level, $userId)
     {
         $inviteData = self::whereUid($inviteUserId)->whereLevel($level)->first();
         if ($inviteData) {
-            $newData['uids'] = $inviteData['uids'] . '|' . $userId;
+            $newData['uids'] = $inviteData['uids'].'|'.$userId;
             $result = self::where('uuid', $inviteData['uuid'])->update($newData);
         } else {
             $inviteData = [
-                'uid' => $inviteUserId,
+                'uid'   => $inviteUserId,
                 'level' => $level,
-                'uids' => $userId,
+                'uids'  => $userId,
             ];
             $result = self::create($inviteData);
         }
-        if (!$result)
+        if (!$result) {
             throw new \Exception('邀请关系更新失败');
-
+        }
     }
 }

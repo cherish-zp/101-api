@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
- * App\Models\SystemSetting
+ * App\Models\SystemSetting.
  *
  * @property int $id ID
  * @property string $key 键
@@ -13,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $decription 描述
  * @property \Illuminate\Support\Carbon|null $updated_at 更新时间
  * @property \Illuminate\Support\Carbon|null $created_at 创建时间
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SystemSetting newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SystemSetting newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SystemSetting query()
@@ -23,7 +22,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SystemSetting whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SystemSetting whereValue($value)
  * @mixin \Eloquent
+ *
  * @property string $name 键
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SystemSetting whereName($value)
  */
 class SystemSetting extends Base
@@ -32,7 +33,7 @@ class SystemSetting extends Base
 
     public static $levelPrefix = 'level';
 
-    public static $levelType = [1,2,3];
+    public static $levelType = [1, 2, 3];
 
     public static $integralCoinName = 'integral_coin_name';
     /**
@@ -48,26 +49,23 @@ class SystemSetting extends Base
      */
     public static $queueCompleteAssetGainName = 'queue_complete asset_ gain';
 
-
-
     /**
      * @param string $field
-     * @return mixed
+     *
      * @throws \Exception
+     *
+     * @return mixed
      */
     public static function getFieldValue(string $field)
     {
-        $val =  self::whereName($field)->value('value');
+        $val = self::whereName($field)->value('value');
         if (empty($val)) {
-            throw new \Exception($field . 'no exists');
+            throw new \Exception($field.'no exists');
         }
-        if (ends_with($field,'coin_name')) {
+        if (ends_with($field, 'coin_name')) {
             CtcCoin::getCoinInfo($val);
         }
+
         return $val;
     }
-
-
-
-
 }

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\AppVersion
+ * App\Models\AppVersion.
  *
  * @property int $id id
  * @property string $version 版本号
@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon $created_at 创建时间
  * @property \Illuminate\Support\Carbon $updated_at 更新时间
  * @property int $deleted 1=删除 0=不删除
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion query()
@@ -33,11 +34,13 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion whereVersion($value)
  * @mixin \Eloquent
+ *
  * @property string|null $deleted_at 删除时间
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion whereDeletedAt($value)
  */
 class AppVersion extends Model
 {
     //
-    protected $table='app_version';
+    protected $table = 'app_version';
 }

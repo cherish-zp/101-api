@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Response;
 
 class Base extends FormRequest
 {
@@ -32,7 +31,8 @@ class Base extends FormRequest
     /**
      *  配置验证器实例。
      *
-     * @param  \Illuminate\Validation\Validator  $validator
+     * @param \Illuminate\Validation\Validator $validator
+     *
      * @return void
      */
     public function withValidator($validator)
@@ -43,8 +43,8 @@ class Base extends FormRequest
             if ($errors != []) {
                 echo json_encode([
                     'message' => current(current($errors)),
-                    'code' => 422,
-                    'data' => [],
+                    'code'    => 422,
+                    'data'    => [],
                 ]);
                 exit;
             }

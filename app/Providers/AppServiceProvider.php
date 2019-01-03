@@ -19,23 +19,22 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment() !== 'local') {
             $this->createSql();
         }
-
     }
 
     public function createSql()
     {
-        file_put_contents('sql.php','<?php' . PHP_EOL);
+        file_put_contents('sql.php', '<?php'.PHP_EOL);
 
         DB::listen(function ($query) {
             // $query->sql
             // $query->bindings
             // $query->time
-            $file = "sql.php";
-            $handle = fopen($file,'a+');
-            $bindingsAndSql  = PHP_EOL . var_export($query->bindings,true).';';
-            $bindingsAndSql .= PHP_EOL . '$sql = '."'$query->sql';";
-            $bindingsAndSql .= PHP_EOL . '$time = ' . '\''. $query->time . 'ms' . '\';';
-            fwrite($handle,$bindingsAndSql);
+            $file = 'sql.php';
+            $handle = fopen($file, 'a+');
+            $bindingsAndSql = PHP_EOL.var_export($query->bindings, true).';';
+            $bindingsAndSql .= PHP_EOL.'$sql = '."'$query->sql';";
+            $bindingsAndSql .= PHP_EOL.'$time = '.'\''.$query->time.'ms'.'\';';
+            fwrite($handle, $bindingsAndSql);
             fclose($handle);
         });
     }

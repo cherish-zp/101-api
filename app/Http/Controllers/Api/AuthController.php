@@ -7,17 +7,15 @@ use App\Models\Captcha;
 use App\Models\User;
 use App\Models\UserInvite;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends BaseController
 {
-
     /**
      * Create a new AuthController instance.
+     *
      * @return void
      */
     public function __construct()
@@ -62,10 +60,11 @@ class AuthController extends BaseController
      *      description="验证失败"
      *   ),
      * )
+     *
      * @param UsersPost $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
-
     public function signIn(UsersPost $request)
     {
         //phpinfo();
@@ -82,13 +81,14 @@ class AuthController extends BaseController
     }
 
     /**
-     * 处理用户登出逻辑
+     * 处理用户登出逻辑.
      *
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout()
     {
         Auth::guard('api')->logout();
+
         return response(['message' => '退出成功']);
     }
 
@@ -148,6 +148,7 @@ class AuthController extends BaseController
      * )
      *
      * @param UsersPost $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function signUp(UsersPost $request)
@@ -155,9 +156,9 @@ class AuthController extends BaseController
         try {
             DB::beginTransaction();
             $postUser = [
-                'area_code' => $request->get('area_code', 86),
-                'mobile' => $request->get('mobile'),
-                'login_pass' => Hash::make($request->get('login_pass')),
+                'area_code'   => $request->get('area_code', 86),
+                'mobile'      => $request->get('mobile'),
+                'login_pass'  => Hash::make($request->get('login_pass')),
                 'invite_code' => User::createUserInviteCode(),
             ];
             if ($request->filled('invite_code')) {
@@ -171,16 +172,17 @@ class AuthController extends BaseController
             UserInvite::updateUserInviteByUserId($user->uuid);
             $token = JWTAuth::fromUser($user);
             DB::commit();
+
             return $this->success([
-                'token' => $token,
+                'token'      => $token,
                 'token_type' => 'bearer',
-                'expires_in' => auth('api')->factory()->getTTL()
+                'expires_in' => auth('api')->factory()->getTTL(),
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return $this->error([], 422, $e->getMessage());
         }
-
     }
 
     /** userInfo
@@ -191,6 +193,7 @@ class AuthController extends BaseController
     public function me()
     {
         $user = auth('api')->user();
+
         return $this->success($user);
         //return response()->json(auth('api')->user());
     }
@@ -225,17 +228,17 @@ class AuthController extends BaseController
 
     /**
      * @param $token
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     protected function respondWithToken($token)
     {
         return $this->success([
-            'token' => $token,
+            'token'      => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL()
+            'expires_in' => auth('api')->factory()->getTTL(),
         ]);
     }
-
 
     public function passwordReset(UsersPost $request)
     {
@@ -246,12 +249,14 @@ class AuthController extends BaseController
         //更新密码
         if (!User::updatePassword($userId, $request->post('login_pass_new'))) {
             return $this->error();
-               return $this->success();
+
+            return $this->success();
         }
     }
 
     /**
      * 忘记密码
+     *
      * ** @SWG\Post(
      *      path="/forgetPassword",
      *      tags={"User"},
@@ -292,7 +297,6 @@ class AuthController extends BaseController
      *    ),
      * )
      *
-     *
      * @param UsersPost $request
      */
     public function forgetPassword(UsersPost $request)
@@ -302,17 +306,17 @@ class AuthController extends BaseController
         $code = $request->code;
 
         if (!User::judgeUserIdExistByMobile($mobile)) {
-            return $this->error([],422,'用户不存在');
+            return $this->error([], 422, '用户不存在');
         }
 
-        if (!Captcha::VerifySms($mobile,$code,$type)) {
-            return $this->error([],422,'验证码错误');
+        if (!Captcha::VerifySms($mobile, $code, $type)) {
+            return $this->error([], 422, '验证码错误');
         }
         //更新用户密码
-        if (!User::updatePasswordByMobile($mobile,$request->login_pass)) {
-            return $this->error([],422,'密码更新失败!');
+        if (!User::updatePasswordByMobile($mobile, $request->login_pass)) {
+            return $this->error([], 422, '密码更新失败!');
         }
-        return $this->success();
 
+        return $this->success();
     }
 }

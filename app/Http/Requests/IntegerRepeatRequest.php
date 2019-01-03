@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
 class IntegerRepeatRequest extends Base
 {
     /**
@@ -14,7 +12,7 @@ class IntegerRepeatRequest extends Base
     public function rules()
     {
         return [
-            'integral'=>['required','numeric'],
+            'integral'=> ['required', 'numeric'],
         ];
     }
 }

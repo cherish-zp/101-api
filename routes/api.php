@@ -1,7 +1,6 @@
 <?php
 
 
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,8 +13,7 @@
 */
 
 bcscale(8);
-Route::namespace('Api')->group(function() {
-
+Route::namespace('Api')->group(function () {
     Route::post('signIn', 'AuthController@signIn');
     Route::post('logout', 'AuthController@logout');
     Route::post('signUp', 'AuthController@signUp');
@@ -23,12 +21,12 @@ Route::namespace('Api')->group(function() {
     Route::post('captcha/sms', 'CaptchaController@sms');
     Route::post('sendMessage', 'sendMessageController@index');
     //banner
-    Route::post('banner','BannerController@index');
+    Route::post('banner', 'BannerController@index');
     //忘记密码
     Route::post('forgetPassword', 'AuthController@forgetPassword');
 });
 
-Route::middleware(['jwt.api.auth','jwt.auth'])->namespace('Api')->group(function(){
+Route::middleware(['jwt.api.auth', 'jwt.auth'])->namespace('Api')->group(function () {
     //修改密码
     Route::post('passwordReset', 'AuthController@passwordReset');
     //用户资产
@@ -36,5 +34,5 @@ Route::middleware(['jwt.api.auth','jwt.auth'])->namespace('Api')->group(function
     //用户进场
     Route::post('enter', 'userEnterController@enter');
     //积分复投
-    Route::post('repeat','RepeatController@integralRepeat');
+    Route::post('repeat', 'RepeatController@integralRepeat');
 });

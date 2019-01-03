@@ -2,16 +2,13 @@
 
 namespace App\Api\Requests;
 
-use Dingo\Api\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
 use Dingo\Api\Exception\ResourceException;
+use Dingo\Api\Http\FormRequest;
 use Illuminate\Auth\AuthenticationException;
-
-
+use Illuminate\Contracts\Validation\Validator;
 
 class Request extends FormRequest
 {
-
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -21,8 +18,9 @@ class Request extends FormRequest
     {
         return true;
     }
+
     /**
-     * 处理验证异常消息
+     * 处理验证异常消息.
      *
      * @param \Illuminate\Contracts\Validation\Validator $validator
      *
@@ -39,12 +37,12 @@ class Request extends FormRequest
     }
 
     /**
-     * 自定义错误
+     * 自定义错误.
+     *
      * @param $message
      */
     protected function error($message)
     {
         throw new ResourceException($message);
     }
-
 }

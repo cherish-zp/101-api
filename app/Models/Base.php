@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\Base
+ * App\Models\Base.
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Base newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Base newQuery()
@@ -20,16 +20,15 @@ class Base extends Model
      * @var bool
      */
     public $timestamps = true;
-    /**
+    /*
      * @var bool
      */
     //public $incrementing = true;
 
-    /**
+    /*
      * 模型中日期字段的存储格式
      *
      * @var string
      */
     //protected $dateFormat = 'U';
-    
 }
