@@ -5,6 +5,14 @@ namespace App\Models;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * App\Models\Captcha
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Captcha newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Captcha newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Captcha query()
+ * @mixin \Eloquent
+ */
 class Captcha extends Base
 {
     //短信平台请求接口

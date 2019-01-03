@@ -30,8 +30,44 @@ class SystemSetting extends Base
 {
     protected $table = 'system_setting';
 
+    public static $levelPrefix = 'level';
+
+    public static $levelType = [1,2,3];
+
+    public static $integralCoinName = 'integral_coin_name';
+    /**
+     * @var string pei 排队资产币种名称
+     */
+    public static $queueAssetCoinName = 'queue_assets_coin_name';
+    /**
+     * @var string 资产币种名称
+     */
+    public static $assetsCoinName = 'assets_coin_name';
+    /**
+     * @var string 复投积资产放大倍数
+     */
+    public static $queueCompleteAssetGainName = 'queue_complete asset_ gain';
+
+
+
+    /**
+     * @param string $field
+     * @return mixed
+     * @throws \Exception
+     */
     public static function getFieldValue(string $field)
     {
-        return self::whereName($field)->value('value');
+        $val =  self::whereName($field)->value('value');
+        if (empty($val)) {
+            throw new \Exception($field . 'no exists');
+        }
+        if (ends_with($field,'coin_name')) {
+            CtcCoin::getCoinInfo($val);
+        }
+        return $val;
     }
+
+
+
+
 }

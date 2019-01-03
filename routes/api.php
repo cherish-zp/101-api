@@ -13,7 +13,7 @@
 |
 */
 
-
+bcscale(8);
 Route::namespace('Api')->group(function() {
 
     Route::post('signIn', 'AuthController@signIn');
@@ -33,5 +33,8 @@ Route::middleware(['jwt.api.auth','jwt.auth'])->namespace('Api')->group(function
     Route::post('passwordReset', 'AuthController@passwordReset');
     //用户资产
     Route::post('userInfo', 'AuthController@me');
-
+    //用户进场
+    Route::post('enter', 'userEnterController@enter');
+    //积分复投
+    Route::post('repeat','RepeatController@integralRepeat');
 });

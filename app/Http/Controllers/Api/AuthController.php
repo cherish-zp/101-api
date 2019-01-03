@@ -252,6 +252,47 @@ class AuthController extends BaseController
 
     /**
      * 忘记密码
+     * ** @SWG\Post(
+     *      path="/forgetPassword",
+     *      tags={"User"},
+     *      summary="忘记密码",
+     *      produces={"application/json"},
+     *      security={{ "Bearer":{}}},
+     *      @SWG\Parameter(
+     *         in="query",
+     *         name="mobile",
+     *         type="string",
+     *         default="86",
+     *         description="手机号",
+     *         required=true
+     *      ),
+     *      @SWG\Parameter(
+     *         in="query",
+     *         name="login_pass",
+     *         type="string",
+     *         default="86",
+     *         description="修改的密码",
+     *         required=true
+     *      ),
+     *     @SWG\Parameter(
+     *         in="query",
+     *         name="code",
+     *         type="string",
+     *         default="",
+     *         description="验证码",
+     *         required=true
+     *      ),
+     *      @SWG\Response(
+     *          response="200",
+     *          description="修改成功"
+     *     ),
+     *     @SWG\Response(
+     *       response="422",
+     *       description="修改失败"
+     *    ),
+     * )
+     *
+     *
      * @param UsersPost $request
      */
     public function forgetPassword(UsersPost $request)

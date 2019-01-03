@@ -15,3 +15,11 @@ function createInviteCode($length)
     }
     return $key;
 }
+
+/**
+ * @return string 获取订单号
+ */
+function getOrderTradeOn()
+{
+    return date('ymdhis').substr(implode(null, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8);
+}

@@ -60,6 +60,8 @@ use Emadadly\LaravelUuid\Uuids;
  * @mixin \Eloquent
  * @property int $status 1=正常|2=禁用
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereStatus($value)
+ * @property string $area_code 区域码
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereAreaCode($value)
  */
 class User extends Authenticatable implements JWTSubject
 {
@@ -158,8 +160,9 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * 通过邀请码获取邀请人uid
-     * @param $invite_code
-     * @return mixed
+     * @param $inviteCode
+     * @return int
+     * @throws \Exception
      */
     public static function getInviteUserIdByInviteCode($inviteCode)
     {
@@ -193,7 +196,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * @paramobile
+     * @param $mobile
      * @return bool
      */
     public  static function judgeUserIdExistByMobile($mobile) : bool
