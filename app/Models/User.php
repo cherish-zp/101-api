@@ -13,7 +13,7 @@ use Emadadly\LaravelUuid\Uuids;
  * App\Models\User
  *
  * @property string $uuid 唯一约束
- * @property int $user_id 用户id
+ * @property int $uid 用户id
  * @property string $mobile 手机号
  * @property int $level 用户等级
  * @property float $invest_num 投资金额
@@ -87,7 +87,7 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'mobile', 'login_pass', 'pay_pass', 'reg_time', 'amount', 'invite_code', 'invite_uid',
     ];
-    protected $primaryKey = 'user_id';
+    protected $primaryKey = 'uid';
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -182,17 +182,17 @@ class User extends Authenticatable implements JWTSubject
      */
     public static function getInviteUserIdByInviteCode($inviteCode)
     {
-        $inviteUser = self::getUserInfo(['invite_code' => $inviteCode], ['user_id']);
+        $inviteUser = self::getUserInfo(['invite_code' => $inviteCode], ['uid']);
         if (!$inviteUser)
             throw new \Exception('邀请码无效');
-        return $inviteUser->user_id;
+        return $inviteUser->uid;
     }
 
 
     public static function createUserInviteCode()
     {
         $inviteCode = createInviteCode(8);
-        $inviteUser = self::getUserInfo(['invite_code' => $inviteCode], ['user_id']);
+        $inviteUser = self::getUserInfo(['invite_code' => $inviteCode], ['uid']);
         if ($inviteUser) {
             self::createUserInviteCode();
         }
@@ -217,7 +217,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public  static function judgeUserIdExistByMobile($mobile) : bool
     {
-        return self::whereMobile($mobile)->value('user_id') ? true : false;
+        return self::whereMobile($mobile)->value('uid') ? true : false;
     }
 
     /**

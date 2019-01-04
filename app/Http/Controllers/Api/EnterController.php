@@ -52,7 +52,7 @@ class EnterController extends BaseController {
     public function queue(UserEnterPost $userEnterRequest)
     {
         try {
-            $userId = JWTAuth::user()->user_id;
+            $userId = JWTAuth::user()->uid;
 
             if (User::isOut($userId))
                 throw new \Exception('你已出局,无法排队');

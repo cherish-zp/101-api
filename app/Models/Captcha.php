@@ -109,13 +109,13 @@ class Captcha extends Base
     /**
      * 验证token
      * @param $str
-     * @param $user_id
+     * @param $uid
      * @param $type
      * @return bool
      */
-    public static function VerifyToken($str, $user_id, $type)
+    public static function VerifyToken($str, $uid, $type)
     {
-        $key = "verify_{$type}:{$user_id}";
+        $key = "verify_{$type}:{$uid}";
         $token = Cache::get($key);
         if(!$token || $token != $str) {
             return false;

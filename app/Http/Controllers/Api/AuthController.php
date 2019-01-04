@@ -72,7 +72,7 @@ class AuthController extends BaseController
         $params = $request->validated();
         $user = User::where('mobile', '=', $params['mobile'])->first();
 
-        if (User::userPasswordIsCorrect($user->user_id, $params['login_pass'])) {
+        if (User::userPasswordIsCorrect($user->uid, $params['login_pass'])) {
             $token = JWTAuth::fromUser($user);
         } else {
             return $this->error([], 422, '账号或者密码不正确');
@@ -239,7 +239,7 @@ class AuthController extends BaseController
 
     public function passwordReset(UsersPost $request)
     {
-        $userId = JWTAuth::user()->user_id;
+        $userId = JWTAuth::user()->uid;
         if (!User::userPasswordIsCorrect($userId, $request->post('login_pass_old'))) {
             return $this->success([], 422, '密码错误');
         }

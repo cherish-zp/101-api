@@ -22,7 +22,7 @@ class RepeatController extends BaseController
     {
         try {
 
-            $userId = \JWTAuth::user()->user_id;
+            $userId = \JWTAuth::user()->uid;
             //积分币种名称
             $integralCoinName = SystemSetting::getFieldValue(SystemSetting::$integralCoinName);
             //资产币种名称

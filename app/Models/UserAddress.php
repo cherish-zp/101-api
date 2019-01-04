@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  * App\Models\UserAddress
  *
  * @property string $uuid uuid
- * @property int $user_id 用户id
+ * @property int $uid 用户id
  * @property int $cid 币种id
  * @property string $address 提币地址
  * @property string $remake 备注

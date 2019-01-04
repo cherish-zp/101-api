@@ -48,13 +48,13 @@ class UserInvite extends Base
         static $nowLevel = 1;
         if ($nowLevel <= $maxLevel) {
             $inviteUser = [];
-            $user = User::getUserInfo(['uuid' => $uuid], ['user_id', 'invite_uid']);
+            $user = User::getUserInfo(['uuid' => $uuid], ['uid', 'invite_uid']);
             if ($user->invite_uid) {
                 if ($nowLevel == 1) {
-                    self::$regUserId = $user->user_id;
+                    self::$regUserId = $user->uid;
                 }
                 self::setInviteByUid($user->invite_uid, $nowLevel, self::$regUserId);
-                $inviteUser = User::getUserInfo(['user_id' => $user->invite_uid], ['uuid', 'user_id', 'invite_uid']);
+                $inviteUser = User::getUserInfo(['uid' => $user->invite_uid], ['uuid', 'uid', 'invite_uid']);
                 if ($inviteUser->invite_uid) {
                     $nowLevel++;
                     self::updateUserInviteByUserId($inviteUser->uuid);

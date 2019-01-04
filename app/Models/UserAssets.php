@@ -37,8 +37,6 @@ class UserAssets extends Base
     use Uuids;
     protected $table = 'user_assets';
 
-    protected $primaryKey = 'uuid';
-
     protected $guarded = [];
 
     /**

@@ -34,7 +34,7 @@ class Queue extends Model
 {
     use Uuids;
     public $table = 'queue';
-    protected $primaryKey = 'uuid';
+
     public $fillable = [
         'uid', 'num', 'status'
     ];
