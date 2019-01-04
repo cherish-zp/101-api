@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Queue;
+use App\Models\SystemSetting;
 use Illuminate\Console\Command;
 
 class Enter extends Command
@@ -37,6 +39,13 @@ class Enter extends Command
      */
     public function handle()
     {
-        //
+        $percent = SystemSetting::getFieldValue('queued_entry_people_percent');
+        $count = Queue::getQueueingCount();
+        $limit = ceil($count * $percent);
+
+        if ($limit) {
+            $queue = Queue::getQueueing($limit);
+            dd($queue);
+        }
     }
 }
