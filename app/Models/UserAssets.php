@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Emadadly\LaravelUuid\Uuids;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -32,7 +33,12 @@ use Illuminate\Database\Eloquent\Model;
  */
 class UserAssets extends Base
 {
+    use Uuids;
     protected $table = 'user_assets';
+
+    protected $primaryKey = 'uuid';
+
+    protected $guarded = [];
 
     /**
      * 获取用户资产
@@ -43,7 +49,7 @@ class UserAssets extends Base
      */
     public static function getUserAssetsUserIdAndCoinName($userId,$coinName)
     {
-        $assets = self::whereCoinName($coinName)->whereUid($userId)->value($coinName);
+        $assets = self::whereUid($userId)->whereCoinName($coinName)->first();
         if (empty($assets))
             throw new \Exception('资产异常');
         return $assets;

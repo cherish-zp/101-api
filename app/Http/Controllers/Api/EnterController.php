@@ -9,11 +9,14 @@ use App\Models\SystemSetting;
 use App\Models\User;
 use App\Models\UserAssets;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class EnterController extends BaseController {
 
     /**
+     * 用户开始排队
+     *
      * ** @SWG\Post(
      *     path="/queue",
      *     tags={"Enter"},
@@ -40,7 +43,7 @@ class EnterController extends BaseController {
      *
      *
      *
-     * 用户排队
+     *  此时用户还有没进场成功
      * @param UserEnterPost $userRequest
      * @return \Illuminate\Http\JsonResponse
      */
@@ -55,26 +58,39 @@ class EnterController extends BaseController {
             //根据等级类型查询数量
             $field = SystemSetting::getSystemField(SystemSetting::$levelPrefix , $userRequest->type , SystemSetting::$usdtSuffix);
             $num = SystemSetting::getFieldValue($field);
+            $usdtName = SystemSetting::getFieldValue(SystemSetting::$queueAssetCoinName);
 
-            $queueRecordData = [
-                'trade_no'  =>  getOrderTradeOn(),
-                'uid'       => $userId,
-                'level'     => $userRequest->type,
-                'num'       => $num,
-                'status'    => QueueRecord::$statusNo
-            ];
-            QueueRecord::createRecode($queueRecordData);
+            DB::beginTransaction();
 
-            $queueData = [
-                'uid'       => $userId,
-                'num'       => $num,
-                'status'    => Queue::$statusNo
-            ];
-            Queue::createQueue($queueData);
+                //判断用户usdt资产是否足够
+                $usdtInfo = UserAssets::whereUid($userId)->whereCoinName($usdtName)->lockForUpdate()->first();
 
+                if ($usdtInfo->available < $num )
+                    throw new \Exception($usdtName . ' 不足,无法排队');
+
+                //减少用户资产
+                $usdtInfo->available = bcsub($usdtInfo->available  , $num);
+                $res = $usdtInfo->save();
+                if (!$res)
+                    throw new \Exception('user assets reduce fail');
+
+                $queueRecordData = [
+                    'trade_no'  => getOrderTradeOn(),
+                    'uid'       => $userId,
+                    'level'     => $userRequest->type,
+                    'num'       => $num,
+                    'status'    => QueueRecord::$statusNo
+                ];
+                //插入排队记录表
+                QueueRecord::createRecode($queueRecordData);
+
+                DB::commit();
+
+                return $this->success([],200,'排队成功');
 
 
         } catch (\Exception $e) {
+            DB::rollBack();
             $this->error = $e;
             return $this->error([],422 , $e->getMessage());
         }

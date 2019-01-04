@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereUuid($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue uuid($uuid, $first = true)
  */
 class Queue extends Model
 {
@@ -54,13 +55,13 @@ class Queue extends Model
      */
     public static function createQueue($data)
     {
-        $queue = self::whereUid($data['uid'])->first();
+        $queue = self::whereUid($data['uid'])->lockForUpdate()->first();
         if (!$queue) {
             $res = self::create($data);
             if (!$res)
                 throw new \Exception('queue create fail ');
         } else {
-            throw new \Exception('无法重复创建queue');
+            throw new \Exception('你已在排队中');
         }
         return true;
     }

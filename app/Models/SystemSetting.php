@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 
 /**
@@ -55,7 +56,7 @@ class SystemSetting extends Base
 
     public static $integralCoinName = 'integral_coin_name';
     /**
-     * @var string pei 排队资产币种名称
+     * @var string  排队资产币种名称 usdt
      */
     public static $queueAssetCoinName = 'queue_assets_coin_name';
     /**
@@ -74,7 +75,7 @@ class SystemSetting extends Base
     }
 
     /**
-     * @param string $field
+     * @param string $field 系统参数名称
      * @return mixed
      * @throws \Exception
      */
@@ -84,7 +85,7 @@ class SystemSetting extends Base
         if (empty($val)) {
             throw new \Exception($field . ' no exists ');
         }
-        if (ends_with($field,'coin_name')) {
+        if (Str::endsWith($field,'coin_name')) {
             CtcCoin::getCoinInfo($val);
         }
         return $val;
