@@ -13,3 +13,4 @@ yarn-error.log
 .phpstorm.meta.php
 .htaccess
 .user.ini
+public/sql.php

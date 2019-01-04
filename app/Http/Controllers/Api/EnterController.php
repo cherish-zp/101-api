@@ -7,7 +7,9 @@ use App\Models\Queue;
 use App\Models\QueueRecord;
 use App\Models\SystemSetting;
 use App\Models\User;
+use App\Models\UserAddress;
 use App\Models\UserAssets;
+use App\Models\UserFlow;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -44,10 +46,10 @@ class EnterController extends BaseController {
      *
      *
      *  此时用户还有没进场成功
-     * @param UserEnterPost $userRequest
+     * @param UserEnterPost $userEnterRequest
      * @return \Illuminate\Http\JsonResponse
      */
-    public function queue(UserEnterPost $userRequest)
+    public function queue(UserEnterPost $userEnterRequest)
     {
         try {
             $userId = JWTAuth::user()->user_id;
@@ -56,7 +58,7 @@ class EnterController extends BaseController {
                 throw new \Exception('你已出局,无法排队');
 
             //根据等级类型查询数量
-            $field = SystemSetting::getSystemField(SystemSetting::$levelPrefix , $userRequest->type , SystemSetting::$usdtSuffix);
+            $field = SystemSetting::getSystemField(SystemSetting::$levelPrefix , $userEnterRequest->type , SystemSetting::$usdtSuffix);
             $num = SystemSetting::getFieldValue($field);
             $usdtName = SystemSetting::getFieldValue(SystemSetting::$queueAssetCoinName);
 
@@ -77,17 +79,43 @@ class EnterController extends BaseController {
                 $queueRecordData = [
                     'trade_no'  => getOrderTradeOn(),
                     'uid'       => $userId,
-                    'level'     => $userRequest->type,
+                    'level'     => $userEnterRequest->type,
                     'num'       => $num,
                     'status'    => QueueRecord::$statusNo
                 ];
-                //插入排队记录表
-                QueueRecord::createRecode($queueRecordData);
+                //插入记录表
+                $queueRecode = QueueRecord::createRecode($queueRecordData);
 
-                DB::commit();
+                $queueData = [
+                    'uid'       =>$userId,
+                    'level'     =>$userEnterRequest->type,
+                    'num'       => $num,
+                    'status'    => Queue::$statusNo
+                ];
+                //插入排队表
+                Queue::createQueue($queueData);
 
-                return $this->success([],200,'排队成功');
+                $userAddress = UserAddress::getAddressByUserIdCoinId($userId,$usdtInfo->cid);
 
+                $intoAccount = SystemSetting::getFieldValue(SystemSetting::$systemAccountName);
+                $outAccount = $userAddress;
+                $title = '排队扣除usdt';
+                $beforeNum = $usdtInfo->available;
+
+                $afterNum = bcsub($usdtInfo->available,$num);
+                $num = -$num;
+                $cid = $usdtInfo->cid;
+                $coinName = $usdtInfo->coin_name;
+
+                $resourceId = $queueRecode->trade_no;
+                $type = 1;      //排队
+
+                UserFlow::createFlow($userId, $intoAccount, $outAccount, $title, $beforeNum, $afterNum, $num, $cid
+                    , $coinName, $resourceId, $type);
+
+            DB::commit();
+
+            return $this->success([],200,'操作成功');
 
         } catch (\Exception $e) {
             DB::rollBack();

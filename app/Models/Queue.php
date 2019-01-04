@@ -34,7 +34,7 @@ class Queue extends Model
 {
     use Uuids;
     public $table = 'queue';
-
+    protected $primaryKey = 'uuid';
     public $fillable = [
         'uid', 'num', 'status'
     ];
@@ -61,7 +61,11 @@ class Queue extends Model
             if (!$res)
                 throw new \Exception('queue create fail ');
         } else {
-            throw new \Exception('你已在排队中');
+            $queue->num = bcadd($queue->num,$data['num']);
+            $queue->level = $data['status'];
+            if (!$queue->save()) {
+                throw new \Exception('queue update fail');
+            }
         }
         return true;
     }
