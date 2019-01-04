@@ -12,6 +12,6 @@ return [
     |
     */
 
-    'default_uuid_column' => 'uuid',
+    'default_uuid_column' => 'id',
 
 ];

@@ -8,27 +8,27 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * App\Models\QueueRecord
  *
- * @property string $uuid uuid
+ * @property int $id id
  * @property string $trade_no 交易单号
  * @property int $uid 用户id
  * @property int $level 排队等级
  * @property float $num 追加数量 usdt
- * @property int $status 1=已完成|2=待完成
+ * @property int $status 1=已完成|2=待支付
  * @property \Illuminate\Support\Carbon $created_at 创建时间
  * @property \Illuminate\Support\Carbon $updated_at 更新时间
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QueueRecord newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QueueRecord newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QueueRecord query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QueueRecord uuid($uuid, $first = true)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QueueRecord whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QueueRecord whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QueueRecord whereLevel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QueueRecord whereNum($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QueueRecord whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QueueRecord whereTradeNo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QueueRecord whereUid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QueueRecord whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QueueRecord whereUuid($value)
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QueueRecord uuid($uuid, $first = true)
  */
 class QueueRecord extends Base
 {

@@ -7,23 +7,23 @@ use Emadadly\LaravelUuid\Uuids;
 /**
  * App\Models\UserInvite
  *
- * @property string $uuid uuid
+ * @property string $id uuid
  * @property int $uid 用户id
  * @property int $level 等级
  * @property string $uids 伞下人员
- * @property \Illuminate\Support\Carbon $created_at 创建时间
- * @property \Illuminate\Support\Carbon $updated_at 更新时间
+ * @property \Illuminate\Support\Carbon|null $created_at 创建时间
+ * @property \Illuminate\Support\Carbon|null $updated_at 更新时间
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite uuid($uuid, $first = true)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite whereLevel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite whereUid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite whereUids($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite whereUuid($value)
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite uuid($uuid, $first = true)
  */
 class UserInvite extends Base
 {

@@ -8,27 +8,27 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * App\Models\Queue
  *
- * @property string $uuid uuid
+ * @property string $id id
  * @property int $uid 用户id
  * @property int $level 排队等级
  * @property float $num 总投数量 usdt
- * @property int $status 1=已完成|2=待完成
+ * @property int $status 1=已进场|2=待进场
  * @property string|null $enter_time 进场时间
  * @property \Illuminate\Support\Carbon $created_at 创建时间
  * @property \Illuminate\Support\Carbon $updated_at 更新时间
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue uuid($uuid, $first = true)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereEnterTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereLevel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereNum($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereUid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereUuid($value)
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue uuid($uuid, $first = true)
  */
 class Queue extends Model
 {
