@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereUuid($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue uuid($uuid, $first = true)
  */
 class Queue extends Model
 {
@@ -35,7 +36,7 @@ class Queue extends Model
     public $table = 'queue';
 
     public $fillable = [
-        'uid','num','status'
+        'uid', 'num', 'status'
     ];
 
     /**
@@ -45,7 +46,7 @@ class Queue extends Model
     /**
      * @var int 未完成
      */
-    public static $statusNo  = 2;
+    public static $statusNo = 2;
 
     /**
      * @param $data
@@ -63,5 +64,26 @@ class Queue extends Model
             throw new \Exception('无法重复创建queue');
         }
         return true;
+    }
+
+    /**
+     * 获取排队中用户数据
+     * @return int
+     */
+    public static function getQueueingCount()
+    {
+        $count = self::whereStatus(2)->count();
+        return $count;
+    }
+
+    /**
+     * 获取指定数量的排队
+     * @param $limit
+     * @return Queue[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public static function getQueueing($limit)
+    {
+        $queue = self::whereStatus(2)->orderBy('created_at')->limit($limit)->get();
+        return $queue;
     }
 }
