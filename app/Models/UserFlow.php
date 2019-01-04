@@ -49,6 +49,19 @@ use Tymon\JWTAuth\Facades\JWTAuth;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserFlow whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserFlow whereUuid($value)
  * @mixin \Eloquent
+ * @property string $callback_msg 回调 信息记录
+ * @property int|null $callback_count 回调次数
+ * @property int $request_count 请求python 次数
+ * @property int $request_time 请求python 时间
+ * @property int|null $request_status 1=成功 | 2=失败 | 0:默认  请求python 状态
+ * @property string $request_msg 请求信息
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserFlow uuid($uuid, $first = true)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserFlow whereCallbackCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserFlow whereCallbackMsg($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserFlow whereRequestCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserFlow whereRequestMsg($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserFlow whereRequestStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserFlow whereRequestTime($value)
  */
 class UserFlow extends Base
 {
@@ -69,7 +82,9 @@ class UserFlow extends Base
      * @param $coinName 币种名称
      * @param $resourceId 关联订单id
      * @param $type 类型
+     * @ UserFlow|Model
      */
+
     public static function createFlow($uid, $intoAccount, $outAccount, $title, $beforeNum, $afterNum, $num, $cid, $coinName, $resourceId, $type)
     {
         $flow = [
@@ -85,7 +100,9 @@ class UserFlow extends Base
             'resource_id' => $resourceId,
             'type' => $type,
         ];
-        self::create($flow);
-
+        $flow = self::create($flow);
+        if (!$flow)
+            throw new \Exception('flow insert error');
+        return $flow;
     }
 }

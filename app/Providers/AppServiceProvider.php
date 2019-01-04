@@ -24,7 +24,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function createSql()
     {
-        file_put_contents('sql.php','<?php' . PHP_EOL);
+        $file = $_SERVER['DOCUMENT_ROOT'] . '/../storage/logs/sql.php';
+        file_put_contents($file,'<?php' . PHP_EOL);
 
         DB::listen(function ($query) {
             // $query->sql

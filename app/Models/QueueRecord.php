@@ -55,10 +55,10 @@ class QueueRecord extends Base
      */
     public static function createRecode($data)
     {
-        $res = self::create($data);
-        if (!$res)
+        $queueRecode = self::create($data);
+        if (!$queueRecode)
             throw new \Exception('排队记录插入失败');
 
-        return true;
+        return $queueRecode;
     }
 }
