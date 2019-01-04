@@ -5,10 +5,11 @@ namespace App\Models;
 use Emadadly\LaravelUuid\Uuids;
 use Illuminate\Database\Eloquent\Model;
 
+
 /**
  * App\Models\UserAssets
  *
- * @property string $id id
+ * @property int $id id
  * @property int $uid 用户
  * @property int $cid 币种id
  * @property string $coin_name 资产代码

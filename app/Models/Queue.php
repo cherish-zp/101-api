@@ -5,10 +5,11 @@ namespace App\Models;
 use Emadadly\LaravelUuid\Uuids;
 use Illuminate\Database\Eloquent\Model;
 
+
 /**
  * App\Models\Queue
  *
- * @property string $id id
+ * @property int $id id
  * @property int $uid 用户id
  * @property int $level 排队等级
  * @property float $num 总投数量 usdt

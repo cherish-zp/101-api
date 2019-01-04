@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Emadadly\LaravelUuid\Uuids;
 
+
 /**
  * App\Models\UserInvite
  *

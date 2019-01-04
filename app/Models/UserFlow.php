@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Config;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 
+
 /**
  * App\Models\UserFlow
  *
@@ -80,9 +81,9 @@ class UserFlow extends Base
      * @param $coinName 币种名称
      * @param $resourceId 关联订单id
      * @param $type 类型
-     * @ UserFlow|Model
+     * @return UserFlow|array|Model
+     * @throws \Exception
      */
-
     public static function createFlow($uid, $intoAccount, $outAccount, $title, $beforeNum, $afterNum, $num, $cid, $coinName, $resourceId, $type)
     {
         $flow = [

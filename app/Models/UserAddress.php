@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 /**
  * App\Models\UserAddress
  *
- * @property string $uuid uuid
+ * @property int $id id
  * @property int $uid 用户id
  * @property int $cid 币种id
  * @property string $address 提币地址
@@ -23,11 +24,11 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserAddress whereCid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserAddress whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserAddress whereDefault($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserAddress whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserAddress whereRemake($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserAddress whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserAddress whereUid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserAddress whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserAddress whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserAddress whereUuid($value)
  * @mixin \Eloquent
  */
 class UserAddress extends Base

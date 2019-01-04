@@ -5,6 +5,7 @@ namespace App\Models;
 use Emadadly\LaravelUuid\Uuids;
 use Illuminate\Database\Eloquent\Model;
 
+
 /**
  * App\Models\QueueRecord
  *
