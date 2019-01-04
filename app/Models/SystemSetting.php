@@ -66,8 +66,11 @@ class SystemSetting extends Base
     /**
      * @var string 复投积资产放大倍数
      */
-    public static $queueCompleteAssetGainName = 'queue_complete asset_ gain';
-
+    public static $queueCompleteAssetGainName = 'queue_complete_asset_ gain';
+    /**
+     * @var string 排队进场百分比
+     */
+    public static $queuedEntryPeoplePercent = 'queued_entry_people_percent';
 
     public static function getSystemField($prefix,$middle,$suffix)
     {
