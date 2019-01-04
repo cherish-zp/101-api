@@ -9,26 +9,26 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Emadadly\LaravelUuid\Uuids;
 
 
+
 /**
  * App\Models\User
  *
- * @property string $uuid 唯一约束
- * @property int $user_id 用户id
+ * @property string $id 唯一约束
+ * @property int $uid 用户id
+ * @property string $area_code 区域码
  * @property string $mobile 手机号
  * @property int $level 用户等级
- * @property float $invest_num 投资金额
  * @property float $cash_num 累计提现
  * @property string $login_pass 密码
  * @property string $pay_pass 支付密码
- * @property int $is_out 1:未出局 2 : 出局
+ * @property int $is_queued 1=已进场|2=未进场
+ * @property int $is_out 1:出局 2 : 未出局
  * @property int $invite_uid 邀请用户id
  * @property string $invite_code 邀请码
  * @property string $private_key 私钥
  * @property string $public_key 公钥
  * @property string $mnemonic 助记词
- * @property int $is_queued 1=已排队|2=未排队
- * @property float $dynamic_freed 动态释放数量 [伞下人员释放数量]
- * @property float $static_freeed 静态释放数量 [个人释放数量]
+ * @property int $status 1=正常|2=禁用
  * @property \Illuminate\Support\Carbon $created_at 创建时间
  * @property \Illuminate\Support\Carbon $updated_at 更新时间
  * @property string|null $deleted_at 删除时间
@@ -37,11 +37,11 @@ use Emadadly\LaravelUuid\Uuids;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User uuid($uuid, $first = true)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereAreaCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereCashNum($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereDynamicFreed($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereInvestNum($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereInviteCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereInviteUid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereIsOut($value)
@@ -53,15 +53,10 @@ use Emadadly\LaravelUuid\Uuids;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User wherePayPass($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User wherePrivateKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User wherePublicKey($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereStaticFreeed($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUuid($value)
- * @mixin \Eloquent
- * @property int $status 1=正常|2=禁用
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereStatus($value)
- * @property string $area_code 区域码
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereAreaCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class User extends Authenticatable implements JWTSubject
 {
@@ -215,7 +210,7 @@ class User extends Authenticatable implements JWTSubject
      * @param $mobile
      * @return bool
      */
-    public  static function judgeUserIdExistByMobile($mobile) : bool
+    public static function judgeUserIdExistByMobile($mobile): bool
     {
         return self::whereMobile($mobile)->value('user_id') ? true : false;
     }
@@ -226,9 +221,9 @@ class User extends Authenticatable implements JWTSubject
      * @param $password
      * @return bool
      */
-    public static function updatePasswordByMobile($mobile,$password) : bool
+    public static function updatePasswordByMobile($mobile, $password): bool
     {
-        return self::whereMobile($mobile)->update(['login_pass'=>Hash::make($password)]) ? true : false;
+        return self::whereMobile($mobile)->update(['login_pass' => Hash::make($password)]) ? true : false;
     }
 
     /**
@@ -239,7 +234,7 @@ class User extends Authenticatable implements JWTSubject
     public static function isOut($userId)
     {
         $isOut = self::whereUserId($userId)->value('is_out');
-        return  $isOut == self::$isOutYes ? true : false;
+        return $isOut == self::$isOutYes ? true : false;
     }
 
     /**
@@ -247,11 +242,12 @@ class User extends Authenticatable implements JWTSubject
      * @param $userId
      * @return bool
      */
-    public function isQueued($userId)
+    public static function isQueued($userId)
     {
         $isQueued = self::whereUId($userId)->value('is_queued');
-        return  $isQueued == self::$isQueuedYes ? true : false;
+        return $isQueued == self::$isQueuedYes ? true : false;
     }
+
 
 
 }

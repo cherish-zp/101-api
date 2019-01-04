@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * App\Models\CtcCoin
  *
- * @property string $uuid uuid
- * @property int $cid 币
+ * @property int $id id
+ * @property int $cid 币种id
  * @property string $name 币种简称
  * @property string $full_name 币种全称
  * @property string $icon 币种icon
@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CtcCoin whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CtcCoin whereFullName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CtcCoin whereIcon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CtcCoin whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CtcCoin whereIsseller($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CtcCoin whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CtcCoin whereStatus($value)
@@ -39,7 +40,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CtcCoin whereTransferOut($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CtcCoin whereTransferOutFee($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CtcCoin whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CtcCoin whereUuid($value)
  * @mixin \Eloquent
  */
 class CtcCoin extends Model

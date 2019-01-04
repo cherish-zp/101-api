@@ -17,14 +17,14 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $status 1=正常2=下线
  * @property \Illuminate\Support\Carbon $created_at 创建时间
  * @property \Illuminate\Support\Carbon $updated_at 更新时间
- * @property int $deleted 1=删除 0=不删除
+ * @property string|null $deleted_at 删除时间
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion whereAppType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion whereCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion whereDeleted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion whereDetail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion whereDownurl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion whereId($value)
@@ -33,8 +33,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion whereVersion($value)
  * @mixin \Eloquent
- * @property string|null $deleted_at 删除时间
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AppVersion whereDeletedAt($value)
  */
 class AppVersion extends Model
 {

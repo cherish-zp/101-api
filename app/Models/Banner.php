@@ -13,19 +13,17 @@ use Illuminate\Support\Facades\Config;
  * @property string $image 图片
  * @property int $sort 排序
  * @property int $status 0=隐藏1=显示
- * @property int $deleted 1=已删除
+ * @property string|null $deleted_at 删除时间
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Banner newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Banner newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Banner query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Banner whereDeleted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Banner whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Banner whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Banner whereImage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Banner whereSort($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Banner whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Banner whereTitle($value)
  * @mixin \Eloquent
- * @property string|null $deleted_at 删除时间
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Banner whereDeletedAt($value)
  */
 class Banner extends Base
 {
