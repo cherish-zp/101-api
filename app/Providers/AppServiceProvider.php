@@ -19,26 +19,27 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment() == 'local') {
            $this->createSql();
         }
-
     }
 
     public function createSql()
     {
-        $file = $_SERVER['DOCUMENT_ROOT'] . '/../storage/logs/sql.php';
-        file_put_contents($file,'<?php' . PHP_EOL);
+        if ($_SERVER['DOCUMENT_ROOT']) {
+            $file = $_SERVER['DOCUMENT_ROOT'] . '/../storage/logs/sql.php';
+            file_put_contents($file,'<?php' . PHP_EOL);
 
-        DB::listen(function ($query) {
-            // $query->sql
-            // $query->bindings
-            // $query->time
-            $file = "sql.php";
-            $handle = fopen($file,'a+');
-            $bindingsAndSql  = PHP_EOL . var_export($query->bindings,true).';';
-            $bindingsAndSql .= PHP_EOL . '$sql = '."'$query->sql';";
-            $bindingsAndSql .= PHP_EOL . '$time = ' . '\''. $query->time . 'ms' . '\';';
-            fwrite($handle,$bindingsAndSql);
-            fclose($handle);
-        });
+            DB::listen(function ($query) {
+                // $query->sql
+                // $query->bindings
+                // $query->time
+                $file = "sql.php";
+                $handle = fopen($file,'a+');
+                $bindingsAndSql  = PHP_EOL . var_export($query->bindings,true).';';
+                $bindingsAndSql .= PHP_EOL . '$sql = '."'$query->sql';";
+                $bindingsAndSql .= PHP_EOL . '$time = ' . '\''. $query->time . 'ms' . '\';';
+                fwrite($handle,$bindingsAndSql);
+                fclose($handle);
+            });
+        }
     }
 
     /**

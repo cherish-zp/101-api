@@ -155,7 +155,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public static function getUserPassword(int $uid): string
     {
-        return self::whereUserId($uid)->value('login_pass');
+        return self::whereUid($uid)->value('login_pass');
     }
 
     /**
@@ -166,7 +166,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public static function updatePassword($uid, $password)
     {
-        return self::whereUserId($uid)->update(['login_pass' => Hash::make($password)]);
+        return self::whereUid($uid)->update(['login_pass' => Hash::make($password)]);
     }
 
     /**

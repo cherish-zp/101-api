@@ -84,12 +84,10 @@ class UserFlow extends Base
      * @return UserFlow|array|Model
      * @throws \Exception
      */
-    public static function createFlow($uid, $intoAccount, $outAccount, $title, $beforeNum, $afterNum, $num, $cid, $coinName, $resourceId, $type)
+    public static function createFlow($uid,$title, $beforeNum, $afterNum, $num, $cid, $coinName, $resourceId, $type)
     {
         $flow = [
             'uid' => $uid,
-            'into_account' => $intoAccount,
-            'out_account' => $outAccount,
             'title' => $title,
             'before_num' => $beforeNum,
             'after_num' => $afterNum,
