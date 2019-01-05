@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
+use Emadadly\LaravelUuid\Uuids;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Emadadly\LaravelUuid\Uuids;
-
 
 /**
- * App\Models\User
+ * App\Models\User.
  *
  * @property string $id 唯一约束
  * @property int $uid 用户id
@@ -32,6 +31,7 @@ use Emadadly\LaravelUuid\Uuids;
  * @property \Illuminate\Support\Carbon $updated_at 更新时间
  * @property string|null $deleted_at 删除时间
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User query()
@@ -66,7 +66,6 @@ class User extends Authenticatable implements JWTSubject
      *
      * @var bool
      */
-
     public $incrementing = false;
     /**
      * @var string
@@ -77,7 +76,6 @@ class User extends Authenticatable implements JWTSubject
      *
      * @var array
      */
-
     protected $fillable = [
         'mobile', 'login_pass', 'pay_pass', 'reg_time', 'amount', 'invite_code', 'invite_uid',
     ];
@@ -136,8 +134,10 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * 验证用户密码
+     *
      * @param int $uid
      * @param $password
+     *
      * @return bool
      */
     public static function userPasswordIsCorrect(int $uid, $password): bool
@@ -149,7 +149,9 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * 获取用户密码
+     *
      * @param int $uid
+     *
      * @return string
      */
     public static function getUserPassword(int $uid): string
@@ -159,8 +161,10 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * 更新密码
+     *
      * @param $uid
      * @param $password
+     *
      * @return bool|int
      */
     public static function updatePassword($uid, $password)
@@ -169,19 +173,22 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * 通过邀请码获取邀请人uid
+     * 通过邀请码获取邀请人uid.
+     *
      * @param $inviteCode
-     * @return int
+     *
      * @throws \Exception
+     *
+     * @return int
      */
     public static function getInviteUserIdByInviteCode($inviteCode)
     {
         $inviteUser = self::getUserInfo(['invite_code' => $inviteCode], ['uid']);
-        if (!$inviteUser)
+        if (!$inviteUser) {
             throw new \Exception('邀请码无效');
+        }
         return $inviteUser->uid;
     }
-
 
     public static function createUserInviteCode()
     {
@@ -190,23 +197,26 @@ class User extends Authenticatable implements JWTSubject
         if ($inviteUser) {
             self::createUserInviteCode();
         }
+
         return $inviteCode;
     }
 
     /**
-     * 获取用户信息
+     * 获取用户信息.
+     *
      * @param array $where
      * @param array $fileds
+     *
      * @return User|\Illuminate\Database\Eloquent\Model|object|null
      */
     public static function getUserInfo(array $where, array $fileds = [])
     {
         return self::where($where)->first($fileds);
-
     }
 
     /**
      * @param $mobile
+     *
      * @return bool
      */
     public static function judgeUserIdExistByMobile($mobile): bool
@@ -216,8 +226,10 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * 更新用户密码
+     *
      * @param $mobile
      * @param $password
+     *
      * @return bool
      */
     public static function updatePasswordByMobile($mobile, $password): bool
@@ -227,30 +239,37 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * 判断用户是否出局
+     *
      * @param $uid
+     *
      * @return bool
      */
     public static function isOut($uid)
     {
         $isOut = self::whereUid($uid)->value('is_out');
+
         return $isOut == self::$isOutYes ? true : false;
     }
 
     /**
-     * 判断用户是否进场
+     * 判断用户是否进场.
+     *
      * @param $uid
+     *
      * @return bool
      */
     public static function isQueued($uid)
     {
         $isQueued = self::whereUid($uid)->value('is_queued');
+
         return $isQueued == self::$isQueuedYes ? true : false;
     }
 
-
     /**
      * 更新用户进场状态
+     *
      * @param $uid
+     *
      * @return bool|int
      */
     public static function updateQueueStatus($uid)

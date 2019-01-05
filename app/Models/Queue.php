@@ -3,11 +3,9 @@
 namespace App\Models;
 
 use Emadadly\LaravelUuid\Uuids;
-use Illuminate\Database\Eloquent\Model;
-
 
 /**
- * App\Models\Queue
+ * App\Models\Queue.
  *
  * @property string $id id
  * @property string $trade_no 交易单号
@@ -18,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $enter_time 进场时间
  * @property \Illuminate\Support\Carbon $created_at 创建时间
  * @property \Illuminate\Support\Carbon $updated_at 更新时间
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue query()
@@ -39,7 +38,7 @@ class Queue extends Base
     public $table = 'queue';
 
     public $fillable = [
-        'uid', 'num', 'status'
+        'uid', 'num', 'status',
     ];
 
     /**
@@ -53,45 +52,53 @@ class Queue extends Base
 
     /**
      * @param $data
-     * @return bool
+     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public static function createQueue($data)
     {
         $queue = self::whereUid($data['uid'])->lockForUpdate()->first();
         if (!$queue) {
             $res = self::create($data);
-            if (!$res)
+            if (!$res) {
                 throw new \Exception('queue create fail ');
+            }
         } else {
-            $queue->num = bcadd($queue->num,$data['num']);
+            $queue->num = bcadd($queue->num, $data['num']);
             $queue->level = $data['status'];
             if (!$queue->save()) {
                 throw new \Exception('queue update fail');
             }
         }
+
         return true;
     }
 
     /**
-     * 获取排队中用户数据
+     * 获取排队中用户数据.
+     *
      * @return int
      */
     public static function getQueueingCount()
     {
         $count = self::whereStatus(2)->count();
+
         return $count;
     }
 
     /**
      * 获取指定数量的排队
+     *
      * @param $limit
+     *
      * @return Queue[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
     public static function getQueueing($limit)
     {
         $queue = self::whereStatus(2)->orderBy('created_at')->limit($limit)->get();
+
         return $queue;
     }
-
 }

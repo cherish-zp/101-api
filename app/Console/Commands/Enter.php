@@ -56,13 +56,14 @@ class Enter extends Command
     }
 
     /**
-     *处理进场资产逻辑
+     *处理进场资产逻辑.
+     *
      * @param $queue
+     *
      * @throws \Exception
      */
     private function updateQueueStatus($queue)
     {
-
         DB::transaction(function () use ($queue) {
             Queue::whereId($queue->id)->update(['status' => Queue::$statusYes, 'enter_time' => date('Y-m-d H:i:s')]);
             $assetsName = SystemSetting::getFieldValue(SystemSetting::$assetsCoinName);

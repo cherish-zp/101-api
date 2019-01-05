@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-
-
 /**
- * App\Models\SystemSetting
+ * App\Models\SystemSetting.
  *
  * @property int $id ID
  * @property string $name 键
@@ -16,6 +13,7 @@ use Illuminate\Support\Str;
  * @property string|null $decription 描述
  * @property \Illuminate\Support\Carbon|null $created_at 创建时间
  * @property \Illuminate\Support\Carbon|null $updated_at 更新时间
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SystemSetting newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SystemSetting newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\SystemSetting query()
@@ -52,12 +50,11 @@ class SystemSetting extends Base
      */
     public static $releasePercentSuffix = '_release_percent';
 
-
-    public static $levelType = [1,2,3];
+    public static $levelType = [1, 2, 3];
 
     public static $integralCoinName = 'integral_coin_name';
     /**
-     * @var string  排队资产币种名称 usdt
+     * @var string 排队资产币种名称 usdt
      */
     public static $queueAssetCoinName = 'queue_assets_coin_name';
     /**
@@ -77,37 +74,35 @@ class SystemSetting extends Base
      */
     public static $systemAccountName = 'system_account';
 
-
-
     /**
      * @param $prefix
      * @param $middle
      * @param $suffix
+     *
      * @return string
      */
-    public static function getSystemField($prefix,$middle,$suffix)
+    public static function getSystemField($prefix, $middle, $suffix)
     {
-        return $prefix . $middle . $suffix;
+        return $prefix.$middle.$suffix;
     }
 
     /**
      * @param string $field 系统参数名称
-     * @return mixed
+     *
      * @throws \Exception
+     *
+     * @return mixed
      */
     public static function getFieldValue(string $field)
     {
-        $val =  self::whereName($field)->value('value');
+        $val = self::whereName($field)->value('value');
         if (empty($val)) {
-            throw new \Exception($field . ' no exists ');
+            throw new \Exception($field.' no exists ');
         }
-        if (Str::endsWith($field,'coin_name')) {
+        if (Str::endsWith($field, 'coin_name')) {
             CtcCoin::getCoinInfo($val);
         }
+
         return $val;
     }
-
-
-
-
 }

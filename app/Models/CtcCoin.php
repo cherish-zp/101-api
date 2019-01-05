@@ -4,9 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-
 /**
- * App\Models\CtcCoin
+ * App\Models\CtcCoin.
  *
  * @property int $id id
  * @property int $cid 币种id
@@ -23,6 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon $created_at 添加时间
  * @property \Illuminate\Support\Carbon $updated_at 更新时间
  * @property string|null $deleted_at 删除时间
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CtcCoin newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CtcCoin newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CtcCoin query()
@@ -51,9 +51,9 @@ class CtcCoin extends Model
     {
         $coinInfo = self::whereName($coinName)->first();
 
-        if (!$coinInfo)
-            throw new \Exception('ctc_coin ' . $coinName . ' val  exception');
-
+        if (!$coinInfo) {
+            throw new \Exception('ctc_coin '.$coinName.' val  exception');
+        }
         return $coinInfo;
     }
 }

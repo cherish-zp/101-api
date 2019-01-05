@@ -3,11 +3,9 @@
 namespace App\Models;
 
 use Emadadly\LaravelUuid\Uuids;
-use Illuminate\Database\Eloquent\Model;
-
 
 /**
- * App\Models\QueueRecord
+ * App\Models\QueueRecord.
  *
  * @property int $id id
  * @property string $trade_no 交易单号
@@ -17,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $status 1=已完成|2=待支付
  * @property \Illuminate\Support\Carbon $created_at 创建时间
  * @property \Illuminate\Support\Carbon $updated_at 更新时间
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QueueRecord newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QueueRecord newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QueueRecord query()
@@ -37,7 +36,7 @@ class QueueRecord extends Base
     public $table = 'queue_record';
 
     public $fillable = [
-        'trade_no','uid','level','num','status'
+        'trade_no', 'uid', 'level', 'num', 'status',
     ];
     /**
      * @var int 已完成
@@ -46,20 +45,23 @@ class QueueRecord extends Base
     /**
      * @var int 未完成
      */
-    public static $statusNo  = 2;
+    public static $statusNo = 2;
 
     /**
-     * 插入排队记录
+     * 插入排队记录.
+     *
      * @param $data
-     * @return bool
+     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public static function createRecode($data)
     {
         $queueRecode = self::create($data);
-        if (!$queueRecode)
+        if (!$queueRecode) {
             throw new \Exception('排队记录插入失败');
-
+        }
         return $queueRecode;
     }
 }

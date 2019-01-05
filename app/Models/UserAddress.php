@@ -2,11 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-
 /**
- * App\Models\UserAddress
+ * App\Models\UserAddress.
  *
  * @property int $id id
  * @property int $uid 用户id
@@ -17,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $status 0=禁用1=可用
  * @property \Illuminate\Support\Carbon|null $created_at 创建时间
  * @property \Illuminate\Support\Carbon|null $updated_at 更新时间
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserAddress newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserAddress newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserAddress query()
@@ -37,12 +35,12 @@ class UserAddress extends Base
     protected $guarded = [];
     protected $hidden = [];
 
-
-    public static function getAddressByUserIdCoinId($uid,$cid)
+    public static function getAddressByUserIdCoinId($uid, $cid)
     {
         $address = self::whereUid($uid)->whereCid($cid)->value('address');
-        if (empty($address))
+        if (empty($address)) {
             throw new  \Exception('user address exception');
+        }
         return $address;
     }
 }

@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Captcha;
 use App\Api\Requests\Captcha as CaptchaRequest;
-use App\Http\Controllers\Controller;
+use App\Models\Captcha;
 use App\Models\User;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Mail;
 
 class CaptchaController extends BaseController
 {
     /**
-     *
      * @SWG\Post(path="/captcha/sms",
      *   tags={"Captcha"},
      *   summary="发送短信验证码",
@@ -51,8 +49,10 @@ class CaptchaController extends BaseController
      * )
      *
      * @param CaptchaRequest $request
-     * @return mixed
+     *
      * @throws \GuzzleHttp\Exception\GuzzleException
+     *
+     * @return mixed
      */
     public function sms(CaptchaRequest $request)
     {
@@ -62,10 +62,10 @@ class CaptchaController extends BaseController
         $type = $request->get('type');
         $area_code = $user ? $user->area_code : $request->get('area_code');
 
-        if(!$area_code) {
+        if (!$area_code) {
             $area_code = \App\Models\User::where('mobile', $mobile)->value('area_code');
             if (!$area_code) {
-                return $this->error([],422,'没有找到注册信息');
+                return $this->error([], 422, '没有找到注册信息');
             }
         }
         $code = mt_rand(100000, 999999);
@@ -73,18 +73,20 @@ class CaptchaController extends BaseController
         $msg = "【101】验证码:{$code},您正在{$type_msg}。10分钟内有效，请勿告知他人。";
 
         //发送短信
-        $res = Captcha::sendSms($area_code . $mobile, $msg);
-        if(!$res) {
-            $this->error([],422,'发送失败');
+        $res = Captcha::sendSms($area_code.$mobile, $msg);
+        if (!$res) {
+            $this->error([], 422, '发送失败');
         }
-        Cache::put("sms_{$type}_code:" . $mobile, $code , 10);
+        Cache::put("sms_{$type}_code:".$mobile, $code, 10);
 
         return $this->success();
     }
 
     /**
      * 发送邮件验证码
+     *
      * @param \App\Api\V1\Requests\Captcha $request
+     *
      * @return array
      */
     public function email(CaptchaRequest $request)
@@ -94,12 +96,13 @@ class CaptchaController extends BaseController
         $code = mt_rand(100000, 999999);
         $type_msg = Captcha::getSmsType($type);
         $msg = "【】验证码:{$code},您正在{$type_msg}。10分钟内有效，请勿告知他人。";
-        $flag= Mail::raw($msg, function($message) use ($email) {
+        $flag = Mail::raw($msg, function ($message) use ($email) {
             $message->to($email)->subject('注册');
         });
         $flag && $this->response->error('发送失败', 500);
 
-        Cache::put("email_{$type}_code:" . $email, $code, 10);
+        Cache::put("email_{$type}_code:".$email, $code, 10);
+
         return $this->respondSuccess();
     }
 }

@@ -4,9 +4,8 @@ namespace App\Models;
 
 use Emadadly\LaravelUuid\Uuids;
 
-
 /**
- * App\Models\UserInvite
+ * App\Models\UserInvite.
  *
  * @property string $id uuid
  * @property int $uid 用户id
@@ -14,6 +13,7 @@ use Emadadly\LaravelUuid\Uuids;
  * @property string $uids 伞下人员
  * @property \Illuminate\Support\Carbon|null $created_at 创建时间
  * @property \Illuminate\Support\Carbon|null $updated_at 更新时间
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite query()
@@ -36,11 +36,13 @@ class UserInvite extends Base
 
     protected $guarded = [];
 
-    static $regUserId = '';
+    public static $regUserId = '';
 
     /**
-     * 更新用户邀请关系
+     * 更新用户邀请关系.
+     *
      * @param $uuid
+     *
      * @throws \Exception
      */
     public static function updateUserInviteByUserId($uuid)
@@ -61,33 +63,34 @@ class UserInvite extends Base
                     self::updateUserInviteByUserId($inviteUser->uuid);
                 }
             }
-
         }
     }
 
     /**
-     * 设置用户邀请关系
+     * 设置用户邀请关系.
+     *
      * @param $inviteUserId
      * @param $level
      * @param $userId
+     *
      * @throws \Exception
      */
     public static function setInviteByUid($inviteUserId, $level, $userId)
     {
         $inviteData = self::whereUid($inviteUserId)->whereLevel($level)->first();
         if ($inviteData) {
-            $newData['uids'] = $inviteData['uids'] . '|' . $userId;
+            $newData['uids'] = $inviteData['uids'].'|'.$userId;
             $result = self::where('uuid', $inviteData['uuid'])->update($newData);
         } else {
             $inviteData = [
-                'uid' => $inviteUserId,
+                'uid'   => $inviteUserId,
                 'level' => $level,
-                'uids' => $userId,
+                'uids'  => $userId,
             ];
             $result = self::create($inviteData);
         }
-        if (!$result)
+        if (!$result) {
             throw new \Exception('邀请关系更新失败');
-
+        }
     }
 }

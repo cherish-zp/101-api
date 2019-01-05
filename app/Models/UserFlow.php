@@ -4,13 +4,9 @@ namespace App\Models;
 
 use Emadadly\LaravelUuid\Uuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Config;
-use Tymon\JWTAuth\Facades\JWTAuth;
-
-
 
 /**
- * App\Models\UserFlow
+ * App\Models\UserFlow.
  *
  * @property int $id id
  * @property int $uid uid
@@ -34,6 +30,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
  * @property string $request_msg 请求信息
  * @property \Illuminate\Support\Carbon|null $created_at 创建时间
  * @property \Illuminate\Support\Carbon|null $updated_at 更新时间
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserFlow newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserFlow newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserFlow query()
@@ -64,7 +61,6 @@ use Tymon\JWTAuth\Facades\JWTAuth;
  */
 class UserFlow extends Base
 {
-
     use Uuids;
     protected $table = 'user_flow';
     protected $guarded = [];
@@ -84,25 +80,28 @@ class UserFlow extends Base
      * @param $coinName 币种名称
      * @param $resourceId 关联订单id
      * @param $type 类型
-     * @return UserFlow|array|Model
+     *
      * @throws \Exception
+     *
+     * @return UserFlow|array|Model
      */
-    public static function createFlow($uid,$title, $beforeNum, $afterNum, $num, $cid, $coinName, $resourceId, $type)
+    public static function createFlow($uid, $title, $beforeNum, $afterNum, $num, $cid, $coinName, $resourceId, $type)
     {
         $flow = [
-            'uid' => $uid,
-            'title' => $title,
-            'before_num' => $beforeNum,
-            'after_num' => $afterNum,
-            'num' => $num,
-            'cid' => $cid,
-            'coin_name' => $coinName,
+            'uid'         => $uid,
+            'title'       => $title,
+            'before_num'  => $beforeNum,
+            'after_num'   => $afterNum,
+            'num'         => $num,
+            'cid'         => $cid,
+            'coin_name'   => $coinName,
             'resource_id' => $resourceId,
-            'type' => $type,
+            'type'        => $type,
         ];
         $flow = self::create($flow);
-        if (!$flow)
+        if (!$flow) {
             throw new \Exception('flow insert error');
+        }
         return $flow;
     }
 }

@@ -3,11 +3,9 @@
 namespace App\Models;
 
 use Emadadly\LaravelUuid\Uuids;
-use Illuminate\Database\Eloquent\Model;
-
 
 /**
- * App\Models\CoinRepeat
+ * App\Models\CoinRepeat.
  *
  * @property int $id id
  * @property string $trade_no 交易单号
@@ -17,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $status 1=已完成|2=待完成
  * @property \Illuminate\Support\Carbon|null $created_at 创建时间
  * @property \Illuminate\Support\Carbon|null $updated_at 更新时间
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CoinRepeat newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CoinRepeat newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CoinRepeat query()
@@ -38,7 +37,7 @@ class CoinRepeat extends Base
     public $table = 'coin_repeat';
 
     public $fillable = [
-        'trade_no','uid','integral','assets','status'
+        'trade_no', 'uid', 'integral', 'assets', 'status',
     ];
     /**
      * @var int 已完成
@@ -48,24 +47,26 @@ class CoinRepeat extends Base
      * @var int 待完成
      */
     public static $statusYes = 1;
+
     /**
      * @param $userId
      * @param $repeatIntegral 用户复投积分
+     *
      * @throws \Exception
      */
-    public static function integralRepeat($userId,$repeatIntegral)
+    public static function integralRepeat($userId, $repeatIntegral)
     {
         $queueCompleteAssetGain = SystemSetting::getFieldValue(SystemSetting::$queueCompleteAssetGainName);
-        $assets = bcmul($repeatIntegral,$queueCompleteAssetGain);
+        $assets = bcmul($repeatIntegral, $queueCompleteAssetGain);
 
         $insertData = [
-            'trade_no'  =>  getOrderTradeOn(),
-            'uid'       =>  $userId,
-            'integral'  =>  $repeatIntegral,
-            'assets'    =>  $assets,
-            'status'    =>  self::$statusNo
+            'trade_no'  => getOrderTradeOn(),
+            'uid'       => $userId,
+            'integral'  => $repeatIntegral,
+            'assets'    => $assets,
+            'status'    => self::$statusNo,
         ];
 
-        CoinRepeat::create($insertData);
+        self::create($insertData);
     }
 }
