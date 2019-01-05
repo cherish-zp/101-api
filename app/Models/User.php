@@ -9,7 +9,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Emadadly\LaravelUuid\Uuids;
 
 
-
 /**
  * App\Models\User
  *
@@ -210,7 +209,7 @@ class User extends Authenticatable implements JWTSubject
      * @param $mobile
      * @return bool
      */
-    public  static function judgeUserIdExistByMobile($mobile) : bool
+    public static function judgeUserIdExistByMobile($mobile): bool
     {
         return self::whereMobile($mobile)->value('uid') ? true : false;
     }
@@ -221,9 +220,9 @@ class User extends Authenticatable implements JWTSubject
      * @param $password
      * @return bool
      */
-    public static function updatePasswordByMobile($mobile,$password) : bool
+    public static function updatePasswordByMobile($mobile, $password): bool
     {
-        return self::whereMobile($mobile)->update(['login_pass'=>Hash::make($password)]) ? true : false;
+        return self::whereMobile($mobile)->update(['login_pass' => Hash::make($password)]) ? true : false;
     }
 
     /**
@@ -234,7 +233,7 @@ class User extends Authenticatable implements JWTSubject
     public static function isOut($uid)
     {
         $isOut = self::whereUid($uid)->value('is_out');
-        return  $isOut == self::$isOutYes ? true : false;
+        return $isOut == self::$isOutYes ? true : false;
     }
 
     /**
@@ -242,10 +241,21 @@ class User extends Authenticatable implements JWTSubject
      * @param $uid
      * @return bool
      */
-    public function isQueued($uid)
+    public static function isQueued($uid)
     {
         $isQueued = self::whereUid($uid)->value('is_queued');
-        return  $isQueued == self::$isQueuedYes ? true : false;
+        return $isQueued == self::$isQueuedYes ? true : false;
+    }
+
+
+    /**
+     * 更新用户进场状态
+     * @param $uid
+     * @return bool|int
+     */
+    public static function updateQueueStatus($uid)
+    {
+        return self::whereUid($uid)->update(['is_queued' => 1]);
     }
 
 

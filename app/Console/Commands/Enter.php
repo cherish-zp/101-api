@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Queue;
 use App\Models\SystemSetting;
+use App\Models\User;
 use App\Models\UserAssets;
 use App\Models\UserFlow;
 use Illuminate\Console\Command;
@@ -66,12 +67,12 @@ class Enter extends Command
             Queue::whereId($queue->id)->update(['status' => Queue::$statusYes, 'enter_time' => date('Y-m-d H:i:s')]);
             $assetsName = SystemSetting::getFieldValue(SystemSetting::$assetsCoinName);
             $gain = SystemSetting::getFieldValue(SystemSetting::$queueCompleteAssetGain);
-
             $assets = UserAssets::getUserAssetsUserIdAndCoinName($queue->uid, $assetsName);
             $num = bcmul($queue->num, $gain);
             UserFlow::createFlow($queue->uid, '进场成功资产放大', $assets->available, bcadd($assets->available, $num),
-                $num, $assets->cid, $assets->coin_name, $queue->trade_no, UserFlow::$queueStsus);
+                $num, $assets->cid, $assets->coin_name, $queue->trade_no, UserFlow::$queueStatus);
             UserAssets::whereCoinName($assetsName)->whereUid($queue->uid)->increment('available', $num);
+            User::updateQueueStatus($queue->uid);
         });
     }
 }
