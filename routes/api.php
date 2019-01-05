@@ -12,7 +12,6 @@
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
 bcscale(8);
 Route::namespace('Api')->group(function() {
 

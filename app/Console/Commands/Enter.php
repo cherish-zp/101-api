@@ -64,7 +64,7 @@ class Enter extends Command
         $gain = SystemSetting::getFieldValue(SystemSetting::$queueCompleteAssetGain);
 
 
-        UserFlow::createFlow($item->uid, $intoAccount, $outAccount, $title, $beforeNum, $afterNum, $num, $cid, $coinName, $resourceId, $type);
+        //UserFlow::createFlow($item->uid, $intoAccount, $outAccount, $title, $beforeNum, $afterNum, $num, $cid, $coinName, $resourceId, $type);
         UserAssets::whereCoinName($assetsName)->whereUid($item->uid)->increment('available', $item->num * $gain);
         DB::commit();
     }
