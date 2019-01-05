@@ -34,6 +34,8 @@ Route::middleware(['jwt.api.auth','jwt.auth'])->namespace('Api')->group(function
     Route::post('userInfo', 'AuthController@me');
     //用户排队
     Route::post('queue', 'EnterController@queue');
+    //用户排队选择 usdt 信息
+    Route::post('queueLevelCoinInfo','EnterController@queueLevelCoinInfo');
     //用户进场
     Route::post('enter', 'EnterController@enter');
     //积分复投

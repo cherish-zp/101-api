@@ -57,6 +57,11 @@ class EnterController extends BaseController {
             if (User::isOut($uid))
                 throw new \Exception('你已出局,无法排队');
 
+            if (User::isQueued($uid)) {
+                throw new \Exception('已进场,无法追投');
+            }
+
+
             //根据等级类型查询数量
             $field = SystemSetting::getSystemField(SystemSetting::$levelPrefix , $userEnterRequest->type , SystemSetting::$usdtSuffix);
             $num = SystemSetting::getFieldValue($field);
@@ -95,10 +100,7 @@ class EnterController extends BaseController {
                 //插入排队表
                 Queue::createQueue($queueData);
 
-                $userAddress = UserAddress::getAddressByUserIdCoinId($uid,$usdtInfo->cid);
 
-                $intoAccount = SystemSetting::getFieldValue(SystemSetting::$systemAccountName);
-                $outAccount = $userAddress;
                 $title = '排队扣除usdt';
                 $beforeNum = $usdtInfo->available;
 
@@ -124,9 +126,20 @@ class EnterController extends BaseController {
         }
     }
 
+    /**
+     * 排队等级币种信息
+     * @param Request $request
+     */
+    public function queueLevelCoinInfo(Request $request)
+    {
+        $uid = JWTAuth::user()->uid;
+
+    }
+
+
 
     public function enter() {
-
+        
     }
 
 }

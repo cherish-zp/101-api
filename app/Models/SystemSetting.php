@@ -78,6 +78,7 @@ class SystemSetting extends Base
     public static $systemAccountName = 'system_account';
 
 
+
     /**
      * @param $prefix
      * @param $middle

@@ -25,14 +25,11 @@ class AppServiceProvider extends ServiceProvider
     public function createSql()
     {
         if ($_SERVER['DOCUMENT_ROOT']) {
-            DB::listen(function ($query) {
-                // $query->sql
-                // $query->bindings
-                // $query->time
-                if ($_SERVER['DOCUMENT_ROOT']) {
-                    $file = $_SERVER['DOCUMENT_ROOT'] . '/../storage/logs/sql.php';
-                    file_put_contents($file,'<?php' . PHP_EOL);
-                }
+            $documentRoot = $_SERVER['DOCUMENT_ROOT'];
+            DB::listen(function ($query) use($documentRoot){
+                // $query->sql // $query->bindings // $query->time
+                $file = $documentRoot . '/../storage/logs/sql.php';
+                file_put_contents($file,'<?php' . PHP_EOL);
 
                 $handle = fopen($file,'a+');
                 $bindingsAndSql  = PHP_EOL . var_export($query->bindings,true).';';

@@ -242,11 +242,14 @@ class User extends Authenticatable implements JWTSubject
      * @param $uid
      * @return bool
      */
-    public function isQueued($uid)
+    public static function isQueued($uid)
     {
         $isQueued = self::whereUid($uid)->value('is_queued');
         return  $isQueued == self::$isQueuedYes ? true : false;
     }
 
-
+    public static function getLevel($uid)
+    {
+        return self::whereUid($uid)->value('level');
+    }
 }

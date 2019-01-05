@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\UsersPost;
 use App\Models\Captcha;
+use App\Models\CoinStaticFreed;
 use App\Models\User;
 use App\Models\UserInvite;
 use Illuminate\Support\Facades\Auth;
@@ -68,7 +69,6 @@ class AuthController extends BaseController
 
     public function signIn(UsersPost $request)
     {
-        //phpinfo();
         $params = $request->validated();
         $user = User::where('mobile', '=', $params['mobile'])->first();
 
@@ -77,7 +77,8 @@ class AuthController extends BaseController
         } else {
             return $this->error([], 422, '账号或者密码不正确');
         }
-
+        //静态释放
+        CoinStaticFreed::staticFreed(1);
         return $this->respondWithToken($token);
     }
 
