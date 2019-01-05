@@ -21,6 +21,9 @@ class Base extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    protected $keyType = 'string';
+
     /**
      * @var bool
      */

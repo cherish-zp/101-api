@@ -76,7 +76,7 @@ class UserFlow extends Base
 
     /**
      * @param $uid 用户id
-     * @param $title 标题
+     * @param $title  标题
      * @param $beforeNum 之前数量
      * @param $afterNum 之后数量
      * @param $num 操作数量

@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * App\Models\Queue
  *
- * @property int $id id
+ * @property string $id id
+ * @property string $trade_no 交易单号
  * @property int $uid 用户id
  * @property int $level 排队等级
  * @property float $num 总投数量 usdt
@@ -27,11 +28,12 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereLevel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereNum($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereTradeNo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereUid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Queue whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Queue extends Model
+class Queue extends Base
 {
     use Uuids;
     public $table = 'queue';
