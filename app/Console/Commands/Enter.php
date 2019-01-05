@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Queue;
 use App\Models\SystemSetting;
+use App\Models\User;
 use App\Models\UserAssets;
 use App\Models\UserFlow;
 use Illuminate\Console\Command;
@@ -47,25 +48,31 @@ class Enter extends Command
         $limit = ceil($count * $percent);
 
         if ($limit) {
-            $queue = Queue::getQueueing($limit);
-            foreach ($queue as $item) {
-                echo $item->level;
-                echo '<br>' . $item->num;
-                $this->updateQueueStatus($item);
+            $queues = Queue::getQueueing($limit);
+            foreach ($queues as $queue) {
+                $this->updateQueueStatus($queue);
             }
         }
     }
 
-    private function updateQueueStatus($item)
+    /**
+     *处理进场资产逻辑
+     * @param $queue
+     * @throws \Exception
+     */
+    private function updateQueueStatus($queue)
     {
-        DB::beginTransaction();
-        Queue::whereUuid($item->uuid)->update(['status' => Queue::$statusYes, 'enter_time' => date('Y-m-d H:i:s')]);
-        $assetsName = SystemSetting::getFieldValue(SystemSetting::$assetsCoinName);
-        $gain = SystemSetting::getFieldValue(SystemSetting::$queueCompleteAssetGain);
 
-
-        //UserFlow::createFlow($item->uid, $intoAccount, $outAccount, $title, $beforeNum, $afterNum, $num, $cid, $coinName, $resourceId, $type);
-        UserAssets::whereCoinName($assetsName)->whereUid($item->uid)->increment('available', $item->num * $gain);
-        DB::commit();
+        DB::transaction(function () use ($queue) {
+            Queue::whereId($queue->id)->update(['status' => Queue::$statusYes, 'enter_time' => date('Y-m-d H:i:s')]);
+            $assetsName = SystemSetting::getFieldValue(SystemSetting::$assetsCoinName);
+            $gain = SystemSetting::getFieldValue(SystemSetting::$queueCompleteAssetGain);
+            $assets = UserAssets::getUserAssetsUserIdAndCoinName($queue->uid, $assetsName);
+            $num = bcmul($queue->num, $gain);
+            UserFlow::createFlow($queue->uid, '进场成功资产放大', $assets->available, bcadd($assets->available, $num),
+                $num, $assets->cid, $assets->coin_name, $queue->trade_no, UserFlow::$queueStatus);
+            UserAssets::whereCoinName($assetsName)->whereUid($queue->uid)->increment('available', $num);
+            User::updateQueueStatus($queue->uid);
+        });
     }
 }

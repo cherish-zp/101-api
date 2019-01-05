@@ -93,4 +93,5 @@ class Queue extends Base
         $queue = self::whereStatus(2)->orderBy('created_at')->limit($limit)->get();
         return $queue;
     }
+
 }
