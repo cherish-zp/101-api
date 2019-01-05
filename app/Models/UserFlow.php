@@ -70,10 +70,13 @@ class UserFlow extends Base
     protected $guarded = [];
 
     /**
+     * @var int 排队类型
+     */
+    public static $queueStatus = 1;
+
+    /**
      * @param $uid 用户id
-     * @param $intoAccount 转入账户
-     * @param $outAccount 转出账户
-     * @param $title 标题
+     * @param $title  标题
      * @param $beforeNum 之前数量
      * @param $afterNum 之后数量
      * @param $num 操作数量

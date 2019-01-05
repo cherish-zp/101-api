@@ -52,9 +52,9 @@ class EnterController extends BaseController {
     public function queue(UserEnterPost $userEnterRequest)
     {
         try {
-            $userId = JWTAuth::user()->uid;
+            $uid = JWTAuth::user()->uid;
 
-            if (User::isOut($userId))
+            if (User::isOut($uid))
                 throw new \Exception('你已出局,无法排队');
 
             //根据等级类型查询数量
@@ -65,7 +65,7 @@ class EnterController extends BaseController {
             DB::beginTransaction();
 
                 //判断用户usdt资产是否足够
-                $usdtInfo = UserAssets::whereUid($userId)->whereCoinName($usdtName)->lockForUpdate()->first();
+                $usdtInfo = UserAssets::whereUid($uid)->whereCoinName($usdtName)->lockForUpdate()->first();
 
                 if ($usdtInfo->available < $num )
                     throw new \Exception($usdtName . ' 不足,无法排队');
@@ -78,7 +78,7 @@ class EnterController extends BaseController {
 
                 $queueRecordData = [
                     'trade_no'  => getOrderTradeOn(),
-                    'uid'       => $userId,
+                    'uid'       => $uid,
                     'level'     => $userEnterRequest->type,
                     'num'       => $num,
                     'status'    => QueueRecord::$statusNo
@@ -87,7 +87,7 @@ class EnterController extends BaseController {
                 $queueRecode = QueueRecord::createRecode($queueRecordData);
 
                 $queueData = [
-                    'uid'       =>$userId,
+                    'uid'       =>$uid,
                     'level'     =>$userEnterRequest->type,
                     'num'       => $num,
                     'status'    => Queue::$statusNo
@@ -95,7 +95,7 @@ class EnterController extends BaseController {
                 //插入排队表
                 Queue::createQueue($queueData);
 
-                $userAddress = UserAddress::getAddressByUserIdCoinId($userId,$usdtInfo->cid);
+                $userAddress = UserAddress::getAddressByUserIdCoinId($uid,$usdtInfo->cid);
 
                 $intoAccount = SystemSetting::getFieldValue(SystemSetting::$systemAccountName);
                 $outAccount = $userAddress;
@@ -110,7 +110,7 @@ class EnterController extends BaseController {
                 $resourceId = $queueRecode->trade_no;
                 $type = 1;      //排队
 
-                UserFlow::createFlow($userId, $intoAccount, $outAccount, $title, $beforeNum, $afterNum, $num, $cid
+                UserFlow::createFlow($uid, $title, $beforeNum, $afterNum, $num, $cid
                     , $coinName, $resourceId, $type);
 
             DB::commit();

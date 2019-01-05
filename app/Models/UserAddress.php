@@ -38,9 +38,9 @@ class UserAddress extends Base
     protected $hidden = [];
 
 
-    public static function getAddressByUserIdCoinId($UserId,$cid)
+    public static function getAddressByUserIdCoinId($uid,$cid)
     {
-        $address = self::whereUserId($UserId)->whereCid($cid)->value('address');
+        $address = self::whereUid($uid)->whereCid($cid)->value('address');
         if (empty($address))
             throw new  \Exception('user address exception');
         return $address;
