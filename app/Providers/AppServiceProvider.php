@@ -15,6 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
         Schema::defaultStringLength(191);
         if ($this->app->environment() == 'local') {
            $this->createSql();
@@ -24,14 +25,15 @@ class AppServiceProvider extends ServiceProvider
     public function createSql()
     {
         if ($_SERVER['DOCUMENT_ROOT']) {
-            $file = $_SERVER['DOCUMENT_ROOT'] . '/../storage/logs/sql.php';
-            file_put_contents($file,'<?php' . PHP_EOL);
-
             DB::listen(function ($query) {
                 // $query->sql
                 // $query->bindings
                 // $query->time
-                $file = "sql.php";
+                if ($_SERVER['DOCUMENT_ROOT']) {
+                    $file = $_SERVER['DOCUMENT_ROOT'] . '/../storage/logs/sql.php';
+                    file_put_contents($file,'<?php' . PHP_EOL);
+                }
+
                 $handle = fopen($file,'a+');
                 $bindingsAndSql  = PHP_EOL . var_export($query->bindings,true).';';
                 $bindingsAndSql .= PHP_EOL . '$sql = '."'$query->sql';";

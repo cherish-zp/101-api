@@ -228,23 +228,23 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * 判断用户是否出局
-     * @param $userId
+     * @param $uid
      * @return bool
      */
-    public static function isOut($userId)
+    public static function isOut($uid)
     {
-        $isOut = self::whereUserId($userId)->value('is_out');
+        $isOut = self::whereUid($uid)->value('is_out');
         return  $isOut == self::$isOutYes ? true : false;
     }
 
     /**
      * 判断用户是否进场
-     * @param $userId
+     * @param $uid
      * @return bool
      */
-    public function isQueued($userId)
+    public function isQueued($uid)
     {
-        $isQueued = self::whereUId($userId)->value('is_queued');
+        $isQueued = self::whereUid($uid)->value('is_queued');
         return  $isQueued == self::$isQueuedYes ? true : false;
     }
 

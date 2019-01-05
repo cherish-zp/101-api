@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class UserFlowStatus extends Model
+class UserFlowStatus extends Base
 {
-    //
+    
 }
