@@ -8,7 +8,7 @@ use Emadadly\LaravelUuid\Uuids;
 /**
  * App\Models\UserInvite
  *
- * @property string $id uuid
+ * @property string $id id
  * @property int $uid 用户id
  * @property int $level 等级
  * @property string $uids 伞下人员
@@ -17,7 +17,6 @@ use Emadadly\LaravelUuid\Uuids;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite uuid($uuid, $first = true)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite whereLevel($value)
@@ -40,25 +39,25 @@ class UserInvite extends Base
 
     /**
      * 更新用户邀请关系
-     * @param $uuid
+     * @param $id
      * @throws \Exception
      */
-    public static function updateUserInviteByUserId($uuid)
+    public static function updateUserInviteById($id)
     {
         $maxLevel = SystemSetting::getFieldValue('recommend_get_max_level');
         static $nowLevel = 1;
         if ($nowLevel <= $maxLevel) {
             $inviteUser = [];
-            $user = User::getUserInfo(['uuid' => $uuid], ['uid', 'invite_uid']);
+            $user = User::getUserInfo(['id' => $id], ['uid', 'invite_uid']);
             if ($user->invite_uid) {
                 if ($nowLevel == 1) {
                     self::$regUserId = $user->uid;
                 }
                 self::setInviteByUid($user->invite_uid, $nowLevel, self::$regUserId);
-                $inviteUser = User::getUserInfo(['uid' => $user->invite_uid], ['uuid', 'uid', 'invite_uid']);
+                $inviteUser = User::getUserInfo(['uid' => $user->invite_uid], ['id', 'uid', 'invite_uid']);
                 if ($inviteUser->invite_uid) {
                     $nowLevel++;
-                    self::updateUserInviteByUserId($inviteUser->uuid);
+                    self::updateUserInviteById($inviteUser->id);
                 }
             }
 
@@ -69,20 +68,20 @@ class UserInvite extends Base
      * 设置用户邀请关系
      * @param $inviteUserId
      * @param $level
-     * @param $userId
+     * @param $uid
      * @throws \Exception
      */
-    public static function setInviteByUid($inviteUserId, $level, $userId)
+    public static function setInviteByUid($inviteUserId, $level, $uid)
     {
         $inviteData = self::whereUid($inviteUserId)->whereLevel($level)->first();
         if ($inviteData) {
-            $newData['uids'] = $inviteData['uids'] . '|' . $userId;
-            $result = self::where('uuid', $inviteData['uuid'])->update($newData);
+            $newData['uids'] = $inviteData['uids'] . '|' . $uid;
+            $result = self::where('id', $inviteData['id'])->update($newData);
         } else {
             $inviteData = [
                 'uid' => $inviteUserId,
                 'level' => $level,
-                'uids' => $userId,
+                'uids' => $uid,
             ];
             $result = self::create($inviteData);
         }

@@ -78,7 +78,7 @@ class AuthController extends BaseController
             return $this->error([], 422, '账号或者密码不正确');
         }
         //静态释放
-        CoinStaticFreed::staticFreed(1);
+        CoinStaticFreed::staticFreed(User::getUidById($user->id));
         return $this->respondWithToken($token);
     }
 
@@ -155,31 +155,44 @@ class AuthController extends BaseController
     {
         try {
             DB::beginTransaction();
-            $postUser = [
-                'area_code' => $request->get('area_code', 86),
-                'mobile' => $request->get('mobile'),
-                'login_pass' => Hash::make($request->get('login_pass')),
-                'invite_code' => User::createUserInviteCode(),
-            ];
-            if ($request->filled('invite_code')) {
-                $inviteUserId = User::getInviteUserIdByInviteCode($request->invite_code);
-                if ($inviteUserId) {
-                    $postUser['invite_uid'] = $inviteUserId;
+                $postUser = [
+                    'area_code' => $request->get('area_code', 86),
+                    'mobile' => $request->get('mobile'),
+                    'login_pass' => Hash::make($request->get('login_pass')),
+                    'invite_code' => User::createUserInviteCode(),
+                ];
+                if ($request->filled('invite_code')) {
+                    $inviteUid = User::getInviteUserIdByInviteCode($request->invite_code);
+                    if ($inviteUid) {
+                        $postUser['invite_uid'] = $inviteUid;
+                    }
                 }
-            }
 
-            $user = User::create($postUser);
-            UserInvite::updateUserInviteByUserId($user->uuid);
-            $token = JWTAuth::fromUser($user);
+                $user = User::create($postUser);
+
+                if ($request->filled('invite_code')) {
+                    //更新用户到 user_invite
+                    UserInvite::updateUserInviteById($user->id);
+                    $registUid = User::getUidById($user->id);
+                    $inviteUid = User::getUidByInviteCode($request->invite_code);
+                    //用户邀请人更新到 user.lower_level_uids
+                    User::updateLowerLevelUids($registUid,$inviteUid);
+                }
+
+                $token = JWTAuth::fromUser($user);
+
             DB::commit();
+
             return $this->success([
                 'token' => $token,
                 'token_type' => 'bearer',
                 'expires_in' => auth('api')->factory()->getTTL()
             ]);
+
         } catch (\Exception $e) {
+            $this->error = $e;
             DB::rollBack();
-            return $this->error([], 422, $e->getMessage());
+            return $this->error([], 422, '注册失败');
         }
 
     }

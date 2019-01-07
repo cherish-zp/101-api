@@ -202,7 +202,6 @@ class User extends Authenticatable implements JWTSubject
     public static function getUserInfo(array $where, array $fileds = [])
     {
         return self::where($where)->first($fileds);
-
     }
 
     /**
@@ -258,8 +257,52 @@ class User extends Authenticatable implements JWTSubject
         return self::whereUid($uid)->update(['is_queued' => 1]);
     }
 
+    /**
+     * 获取用户等级
+     * @param $uid
+     * @return mixed
+     */
     public static function getLevel($uid)
     {
         return self::whereUid($uid)->value('level');
+    }
+
+    /**
+     * 获取 uid
+     * @param $id
+     * @return mixed
+     */
+    public static  function getUidById($id)
+    {
+        return self::whereId($id)->value('uid');
+    }
+
+    /**
+     * 获取用户 uid 通过邀请码
+     * @param $inviteCode
+     * @return mixed
+     */
+    public static function getUidByInviteCode($inviteCode)
+    {
+        return self::where(['invite_code'=>$inviteCode])->value('uid');
+    }
+
+    /**
+     * 更新注册用户上级用户的 邀请人字段
+     * @param $registUid
+     * @param $inviteUid
+     * @throws \Exception
+     */
+    public static function updateLowerLevelUids($registUid,$inviteUid)
+    {
+        $inviteUser = self::getUserInfo(['uid'=>$inviteUid],['id','uid','lower_level_uids']);
+        if (empty($inviteUser->lower_level_uids)) {
+            $inviteUser->lower_level_uids = $registUid;
+        } else {
+            $inviteUser->lower_level_uids .= '|' . $registUid;
+        }
+        if (!$inviteUser->save())
+            throw new \Exception('用户上级邀请人更新失败');
+
     }
 }

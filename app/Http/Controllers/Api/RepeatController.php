@@ -9,33 +9,26 @@ use App\Models\UserAssets;
 use Illuminate\Http\Request;
 
 /**
+ * 释放
  * Class RepeatController
  * @package App\Http\Controllers\Api
  */
 class RepeatController extends BaseController
 {
     /**
+     * 静态释放 ==> 资产加速释放成积分
      * @param IntegerRepeatRequest $integerRepeatRequest
      * @return \Illuminate\Http\JsonResponse
      */
     public function integralRepeat(IntegerRepeatRequest $integerRepeatRequest)
     {
         try {
-
             $userId = \JWTAuth::user()->uid;
-            //积分币种名称
-            $integralCoinName = SystemSetting::getFieldValue(SystemSetting::$integralCoinName);
-            //资产币种名称
-            $assetsCoinName = SystemSetting::getFieldValue(SystemSetting::$assetsCoinName);
-            //用户资产币种
-            //$userAssets = UserAssets::getUserAssetsUserIdAndCoinName($userId,$assetsCoinName);
-
             CoinRepeat::integralRepeat($userId,$integerRepeatRequest->integral);
 
         } catch (\Exception $e) {
 
             return $this->error([],422,$e->getMessage());
         }
-
     }
 }

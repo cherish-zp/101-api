@@ -76,7 +76,10 @@ class SystemSetting extends Base
      * @var string 系统账户名称
      */
     public static $systemAccountName = 'system_account';
-
+    /**
+     * @var str 资产少于投资金额的倍数名称
+     */
+    public static $assetsLessInvestmentAmountMultiple = 'assets_less_investment amount_multiple';
 
 
     /**

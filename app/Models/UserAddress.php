@@ -37,7 +37,13 @@ class UserAddress extends Base
     protected $guarded = [];
     protected $hidden = [];
 
-
+    /**
+     * 获取用户资产
+     * @param $uid
+     * @param $cid
+     * @return mixed
+     * @throws \Exception
+     */
     public static function getAddressByUserIdCoinId($uid,$cid)
     {
         $address = self::whereUid($uid)->whereCid($cid)->value('address');
@@ -45,4 +51,5 @@ class UserAddress extends Base
             throw new  \Exception('user address exception');
         return $address;
     }
+
 }
