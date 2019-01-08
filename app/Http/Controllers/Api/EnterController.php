@@ -105,9 +105,24 @@ class EnterController extends BaseController {
                 //查询上级推荐人id
 
                 if ($inviteUid = User::getInviteUid($uid) != 0) {
-                    dd($inviteUid);
+                    //查询推荐人是否有推荐奖励
+                    if (User::isHaveDynamicRewards($inviteUid)) {
+                        //推荐人资产增加等额的usdt  + 记录流水
+                        //等值 usdt 加入 推荐人的资产中
+                        $assetsCoinValue = SystemSetting::getFieldValue(SystemSetting::$assetsCoinName);
+                        //查询必须在插入前
+                        $inviteUserAssets = UserAssets::getUserAserIdAndCoinName($inviteUid,$assetsCoinValue);
+
+                        UserAssets::assetsAdd($inviteUid,$assetsCoinValue,$userDiffUsdt);
+                        $title = $inviteUid . ' 接受 ' . $uid . ' 推荐奖 ';
+
+                        //添加用户流水
+                        UserFlow::createFlow($uid,$title, $inviteUserAssets->available
+                            , bcadd($inviteUserAssets->available,$userDiffUsdt), $userDiffUsdt, $inviteUserAssets->cid
+                            , SystemSetting::$assetsCoinName, $queueRecode->trade_no
+                            , UserFlow::$recommendReword);
+                    }
                 }
-                dd(1);
             DB::commit();
 
             return $this->success([],200,'操作成功');

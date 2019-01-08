@@ -74,6 +74,8 @@ class UserFlow extends Base
      */
     public static $queueStatus = 1;
 
+    public static $recommendReword = 2;
+
     /**
      * @param $uid |用户id
      * @param $title  |标题
@@ -89,7 +91,7 @@ class UserFlow extends Base
      */
     public static function createFlow($uid,$title, $beforeNum, $afterNum, $num, $cid, $coinName, $resourceId, $type)
     {
-        $flow = [
+        $data = [
             'uid' => $uid,
             'title' => $title,
             'before_num' => $beforeNum,
@@ -100,9 +102,9 @@ class UserFlow extends Base
             'resource_id' => $resourceId,
             'type' => $type,
         ];
-        $flow = self::create($flow);
+        $flow = self::create($data);
         if (!$flow)
-            throw new \Exception('flow insert error');
+            throw new \Exception('flow create error');
         return $flow;
     }
 }

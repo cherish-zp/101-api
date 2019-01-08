@@ -25,9 +25,8 @@ class ReleaseController extends BaseController
         try {
             $userId = \JWTAuth::user()->uid;
             CoinRepeat::assetsReleaseToIntegral($userId,$integerRepeatRequest->integral);
-
         } catch (\Exception $e) {
-
+            $this->error = $e;
             return $this->error([],422,$e->getMessage());
         }
     }

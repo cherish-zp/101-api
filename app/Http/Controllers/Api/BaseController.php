@@ -21,13 +21,8 @@ class BaseController extends Controller
 
     protected function error($data = [],$code = 422, $msg = 'error')
     {
-        if (!empty($this->error)) {
-            $data = [
-                'Message'           =>  $this->error->getMessage(),
-                'TraceAsString'     =>  $this->error->getTraceAsString(),
-                'Trace'             =>  $this->error->getTrace(),
-                'Previous'          =>  $this->error->getPrevious()
-            ];
+        if (app()->environment('local')) {
+            dd($this->error);
         }
         return response()->json([
             'message' => $msg,

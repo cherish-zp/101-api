@@ -55,31 +55,7 @@ class UserAssets extends Base
         return $assets;
     }
 
-    /**
-     * 判断用户是否有动态释放的资格
-     * 动态释放 => 1 . 公排 2 . 推荐奖
-     * 推荐奖 => 用户进行追加时 上一级增加等级资产
-     * @param $uid
-     * @throws \Exception
-     * @return boolean
-     */
-    public static function isHaveDynamicRewards($uid)
-    {
-        //资产字段名称
-        $field = SystemSetting::$levelPrefix . User::getLevel($uid) . SystemSetting::$usdtSuffix;
-        //用户 等级 投资 usdt 金额
-        $value = SystemSetting::getFieldValue($field);
-        $assetsCoinNameValue = SystemSetting::getFieldValue(SystemSetting::$assetsCoinName);
-        //资产少于投资金额的 5 倍 不享受动态奖励
-        $assetsLessInvestmentAmountMultiple = SystemSetting::getFieldValue(SystemSetting::$assetsLessInvestmentAmountMultiple);
-        $assets_5_multiple = bcmul($value,$assetsLessInvestmentAmountMultiple);
-        $assets = self::getUserAssetsUserIdAndCoinName($uid,$assetsCoinNameValue);
 
-        if ($assets->available < $assets_5_multiple) {
-            return false;
-        }
-        return true;
-    }
 
     /**
      * @param $uid
@@ -98,6 +74,9 @@ class UserAssets extends Base
         //查询用户资产已经产生的币种资产
         $userHasCoinObject = self::where(['uid'=>$uid])->get(['cid','coin_name']);
         $userHasCoinArray = $userHasCoinObject->toArray();
+        if (count($ctcCoinsArr) == count($userHasCoinArray)) {
+            return;
+        }
         $userHasCoinArrayNew = [];
         foreach ($userHasCoinArray as $key => $val) {
             $userHasCoinArrayNew[$val['cid']] = $val;
@@ -131,5 +110,22 @@ class UserAssets extends Base
         $uuid .= substr($str, 16, 4) . '-';
         $uuid .= substr($str, 20, 12);
         return $uuid;
+    }
+
+    /**
+     * 增加用户资产
+     * @param $uid
+     * @param $coinName
+     * @param $num
+     * @throws \Exception
+     */
+    public static function assetsAdd($uid,$coinName,$num)
+    {
+        $res = self::where(['uid'=>$uid,'coin_name'=>$coinName])->update([
+            'available'=>\DB::raw('available+'.$num)
+        ]);
+        if (!$res) {
+            throw new \Exception('推荐人资产增加失败');
+        }
     }
 }
