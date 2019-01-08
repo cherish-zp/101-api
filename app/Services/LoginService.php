@@ -9,7 +9,7 @@
 namespace App\Services;
 
 
-class EmailService
+class LoginService
 {
 
 }

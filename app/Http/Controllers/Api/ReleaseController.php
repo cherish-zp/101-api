@@ -15,19 +15,5 @@ use Illuminate\Http\Request;
  */
 class ReleaseController extends BaseController
 {
-    /**
-     * 静态释放 ==> 资产加速释放成积分
-     * @param IntegerRepeatRequest $integerRepeatRequest
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function assetsReleaseToIntegral(IntegerRepeatRequest $integerRepeatRequest)
-    {
-        try {
-            $userId = \JWTAuth::user()->uid;
-            CoinRepeat::assetsReleaseToIntegral($userId,$integerRepeatRequest->integral);
-        } catch (\Exception $e) {
-            $this->error = $e;
-            return $this->error([],422,$e->getMessage());
-        }
-    }
+
 }

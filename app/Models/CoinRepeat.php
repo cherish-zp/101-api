@@ -53,7 +53,7 @@ class CoinRepeat extends Base
      * @param $repeatIntegral 用户复投积分
      * @throws \Exception
      */
-    public static function assetsReleaseToIntegral($userId,$repeatIntegral)
+    public static function staticRelease($userId,$repeatIntegral)
     {
         $queueCompleteAssetGain = SystemSetting::getFieldValue(SystemSetting::$queueCompleteAssetGainName);
         $assets = bcmul($repeatIntegral,$queueCompleteAssetGain);

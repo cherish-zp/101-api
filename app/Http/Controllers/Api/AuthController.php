@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\LoginLogEvent;
 use App\Http\Requests\UsersPost;
 use App\Models\Captcha;
 use App\Models\CoinStaticFreed;
@@ -80,7 +81,11 @@ class AuthController extends BaseController
                 return $this->error([], 422, '账号或者密码不正确');
             }
 
+
             $uid = User::getUidById($user->id);
+
+            event(new LoginLogEvent($user));
+
             //初始化用户资产
             UserAssets::initUserAssets($uid);
             //静态释放

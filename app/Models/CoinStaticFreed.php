@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Emadadly\LaravelUuid\Uuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -50,8 +51,8 @@ class CoinStaticFreed extends Base
      */
     public static function staticFreed($uid)
     {
-        $currentDate = date('Y-m-d',strtotime('-1 day'));
-        $id = self::where(['uid'=>$uid, 'date'=>$currentDate])->value('id');
+        $yesterdayDate = date('Y-m-d',strtotime('-1 day'));
+        $id = self::where(['uid'=>$uid, 'date'=>$yesterdayDate])->value('id');
         if (!$id) {
             $assetsCoinName = SystemSetting::getFieldValue(SystemSetting::$assetsCoinName);
             $integralCoinName = SystemSetting::getFieldValue(SystemSetting::$integralCoinName);
@@ -99,9 +100,8 @@ class CoinStaticFreed extends Base
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollBack();
-                logger(date('Y-m-d' . "\t" . $uid . "\t" . $e->getMessage()));
+                \Log::info(date('Y-m-d' . "\t" . $uid . "\t" . $e->getMessage()));
             }
-
         }
     }
 }
