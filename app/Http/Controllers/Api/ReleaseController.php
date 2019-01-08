@@ -9,22 +9,22 @@ use App\Models\UserAssets;
 use Illuminate\Http\Request;
 
 /**
- * 释放
+ * 释放 : 资产释放 ==> 积分
  * Class RepeatController
  * @package App\Http\Controllers\Api
  */
-class RepeatController extends BaseController
+class ReleaseController extends BaseController
 {
     /**
      * 静态释放 ==> 资产加速释放成积分
      * @param IntegerRepeatRequest $integerRepeatRequest
      * @return \Illuminate\Http\JsonResponse
      */
-    public function integralRepeat(IntegerRepeatRequest $integerRepeatRequest)
+    public function assetsReleaseToIntegral(IntegerRepeatRequest $integerRepeatRequest)
     {
         try {
             $userId = \JWTAuth::user()->uid;
-            CoinRepeat::integralRepeat($userId,$integerRepeatRequest->integral);
+            CoinRepeat::assetsReleaseToIntegral($userId,$integerRepeatRequest->integral);
 
         } catch (\Exception $e) {
 

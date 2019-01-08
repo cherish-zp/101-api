@@ -110,7 +110,17 @@ class SystemSetting extends Base
         return $val;
     }
 
-
+    /**
+     * 等级 所对应 usdt
+     * @param $level
+     * @return mixed
+     * @throws \Exception
+     */
+    public static function getLevelNeedUsdt($level)
+    {
+        $field = SystemSetting::$levelPrefix . $level . SystemSetting::$usdtSuffix;
+        return self::getFieldValue($field);
+    }
 
 
 }

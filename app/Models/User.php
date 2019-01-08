@@ -305,4 +305,14 @@ class User extends Authenticatable implements JWTSubject
             throw new \Exception('用户上级邀请人更新失败');
 
     }
+
+    /**
+     * 获取用户的 邀请人
+     * @param $uid
+     * @return mixed
+     */
+    public static function getInviteUid($uid)
+    {
+        return self::where(['uid'=>$uid])->value('invite_uid');
+    }
 }

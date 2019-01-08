@@ -39,7 +39,7 @@ class Queue extends Base
     public $table = 'queue';
 
     public $fillable = [
-        'uid', 'num', 'status'
+        'uid','trade_no', 'num', 'status','level'
     ];
 
     /**
@@ -60,6 +60,7 @@ class Queue extends Base
     {
         $queue = self::whereUid($data['uid'])->lockForUpdate()->first();
         if (!$queue) {
+            $data['trade_no'] = getOrderTradeOn();
             $res = self::create($data);
             if (!$res)
                 throw new \Exception('queue create fail ');
@@ -94,4 +95,8 @@ class Queue extends Base
         return $queue;
     }
 
+    public static function hasQueueNum($uid)
+    {
+        return self::where(['uid'=>$uid])->value('num') ?? 0;
+    }
 }

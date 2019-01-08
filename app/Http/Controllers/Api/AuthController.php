@@ -6,6 +6,7 @@ use App\Http\Requests\UsersPost;
 use App\Models\Captcha;
 use App\Models\CoinStaticFreed;
 use App\Models\User;
+use App\Models\UserAssets;
 use App\Models\UserInvite;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -69,17 +70,29 @@ class AuthController extends BaseController
 
     public function signIn(UsersPost $request)
     {
-        $params = $request->validated();
-        $user = User::where('mobile', '=', $params['mobile'])->first();
+        try {
+            $params = $request->validated();
+            $user = User::where('mobile', '=', $params['mobile'])->first();
 
-        if (User::userPasswordIsCorrect($user->uid, $params['login_pass'])) {
-            $token = JWTAuth::fromUser($user);
-        } else {
-            return $this->error([], 422, '账号或者密码不正确');
+            if (User::userPasswordIsCorrect($user->uid, $params['login_pass'])) {
+                $token = JWTAuth::fromUser($user);
+            } else {
+                return $this->error([], 422, '账号或者密码不正确');
+            }
+
+            $uid = User::getUidById($user->id);
+            //初始化用户资产
+            UserAssets::initUserAssets($uid);
+            //静态释放
+            if ($user->level > 0) {
+                CoinStaticFreed::staticFreed($uid);
+            }
+
+            return $this->respondWithToken($token);
+        } catch (\Exception $e) {
+            $this->error = $e;
+            return $this->error([]);
         }
-        //静态释放
-        CoinStaticFreed::staticFreed(User::getUidById($user->id));
-        return $this->respondWithToken($token);
     }
 
     /**

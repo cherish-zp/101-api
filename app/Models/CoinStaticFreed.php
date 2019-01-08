@@ -51,7 +51,6 @@ class CoinStaticFreed extends Base
     public static function staticFreed($uid)
     {
         $currentDate = date('Y-m-d',strtotime('-1 day'));
-
         $id = self::where(['uid'=>$uid, 'date'=>$currentDate])->value('id');
         if (!$id) {
             $assetsCoinName = SystemSetting::getFieldValue(SystemSetting::$assetsCoinName);

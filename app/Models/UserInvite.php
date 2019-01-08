@@ -87,6 +87,5 @@ class UserInvite extends Base
         }
         if (!$result)
             throw new \Exception('邀请关系更新失败');
-
     }
 }

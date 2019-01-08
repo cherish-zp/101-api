@@ -81,6 +81,55 @@ class UserAssets extends Base
         return true;
     }
 
+    /**
+     * @param $uid
+     * 初始化用户的资产数据
+     */
+    public static function initUserAssets($uid)
+    {
+        //查询所有的币种
+        $ctcCoins = CtcCoin::all(['cid','name']);
+        $ctcCoinsArr = $ctcCoins->toArray();
+        $ctcCoinsArrNew = [];
+        foreach ($ctcCoinsArr as $key => $val) {
+            $ctcCoinsArrNew[$val['cid']] = $val;
+        }
 
+        //查询用户资产已经产生的币种资产
+        $userHasCoinObject = self::where(['uid'=>$uid])->get(['cid','coin_name']);
+        $userHasCoinArray = $userHasCoinObject->toArray();
+        $userHasCoinArrayNew = [];
+        foreach ($userHasCoinArray as $key => $val) {
+            $userHasCoinArrayNew[$val['cid']] = $val;
+        }
 
+        $diff_arr = array_diff_key($ctcCoinsArrNew,$userHasCoinArrayNew);
+        if (!empty($diff_arr)) {
+            $insertUserAssetData = [];
+            foreach ($diff_arr as $val) {
+                array_push($insertUserAssetData,[
+                    'id' => self::productUUid(),
+                    'uid'=>$uid,
+                    'cid'=>$val['cid'],
+                    'coin_name'=>$val['name']
+                ]);
+            }
+            self::insert($insertUserAssetData);
+        }
+    }
+
+    /**
+     * @return string
+     * 生成用户的uuid
+     */
+    public static  function productUUid()
+    {
+        $str = md5(uniqid(mt_rand(), true));
+        $uuid = substr($str, 0, 8) . '-';
+        $uuid .= substr($str, 8, 4) . '-';
+        $uuid .= substr($str, 12, 4) . '-';
+        $uuid .= substr($str, 16, 4) . '-';
+        $uuid .= substr($str, 20, 12);
+        return $uuid;
+    }
 }

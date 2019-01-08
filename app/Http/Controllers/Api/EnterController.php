@@ -17,7 +17,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class EnterController extends BaseController {
 
     /**
-     * 用户开始排队
+     * 用户开始排队  == 同时投资金额
      *
      * ** @SWG\Post(
      *     path="/queue",
@@ -60,61 +60,54 @@ class EnterController extends BaseController {
             if (User::isQueued($uid)) {
                 throw new \Exception('已进场,无法追投');
             }
-
-
-            //根据等级类型查询数量
-            $field = SystemSetting::getSystemField(SystemSetting::$levelPrefix , $userEnterRequest->type , SystemSetting::$usdtSuffix);
-            $num = SystemSetting::getFieldValue($field);
+            //usdt name
             $usdtName = SystemSetting::getFieldValue(SystemSetting::$queueAssetCoinName);
+            //根据等级类型查询数量
+            $levelUsdtNum = SystemSetting::getLevelNeedUsdt($userEnterRequest->type);
 
+            //用户审计还差的usdt
+            $userDiffUsdt = $this->userDiffUsdt($uid,$levelUsdtNum);
             DB::beginTransaction();
 
                 //判断用户usdt资产是否足够
                 $usdtInfo = UserAssets::whereUid($uid)->whereCoinName($usdtName)->lockForUpdate()->first();
 
-                if ($usdtInfo->available < $num )
+                if ($usdtInfo->available < $userDiffUsdt )
                     throw new \Exception($usdtName . ' 不足,无法排队');
 
                 //减少用户资产
-                $usdtInfo->available = bcsub($usdtInfo->available  , $num);
+                $usdtInfo->available = bcsub($usdtInfo->available  , $userDiffUsdt);
                 $res = $usdtInfo->save();
                 if (!$res)
                     throw new \Exception('user assets reduce fail');
 
-                $queueRecordData = [
+                //插入记录表
+                $queueRecode = QueueRecord::createRecode([
                     'trade_no'  => getOrderTradeOn(),
                     'uid'       => $uid,
                     'level'     => $userEnterRequest->type,
-                    'num'       => $num,
+                    'num'       => $userDiffUsdt,
                     'status'    => QueueRecord::$statusNo
-                ];
-                //插入记录表
-                $queueRecode = QueueRecord::createRecode($queueRecordData);
+                ]);
 
-                $queueData = [
+                //插入排队表
+                Queue::createQueue([
                     'uid'       =>$uid,
                     'level'     =>$userEnterRequest->type,
-                    'num'       => $num,
+                    'num'       => $userDiffUsdt,
                     'status'    => Queue::$statusNo
-                ];
-                //插入排队表
-                Queue::createQueue($queueData);
+                ]);
 
+                //记录流水
+                UserFlow::createFlow($uid, '排队扣除usdt', $usdtInfo->available, bcsub($usdtInfo->available,$userDiffUsdt)
+                    , -$userDiffUsdt, $usdtInfo->cid, $usdtInfo->coin_name, $resourceId = $queueRecode->trade_no, UserFlow::$queueStatus);
 
-                $title = '排队扣除usdt';
-                $beforeNum = $usdtInfo->available;
+                //查询上级推荐人id
 
-                $afterNum = bcsub($usdtInfo->available,$num);
-                $num = -$num;
-                $cid = $usdtInfo->cid;
-                $coinName = $usdtInfo->coin_name;
-
-                $resourceId = $queueRecode->trade_no;
-                $type = 1;      //排队
-
-                UserFlow::createFlow($uid, $title, $beforeNum, $afterNum, $num, $cid
-                    , $coinName, $resourceId, $type);
-
+                if ($inviteUid = User::getInviteUid($uid) != 0) {
+                    dd($inviteUid);
+                }
+                dd(1);
             DB::commit();
 
             return $this->success([],200,'操作成功');
@@ -133,10 +126,24 @@ class EnterController extends BaseController {
     public function queueLevelCoinInfo(Request $request)
     {
         $uid = JWTAuth::user()->uid;
-
+        $level = 1;
+        $this->levelNeedUsdt($uid,$level);
     }
 
-
+    /**
+     * 用户排队升级所需要的usdt
+     * @param $uid
+     * @param $levelUsdtNum
+     * @return string
+     * @throws \Exception
+     */
+    public function userDiffUsdt($uid,$levelUsdtNum)
+    {
+        $hasQueueNum = Queue::hasQueueNum($uid);
+        if (($levelUsdtNum - $hasQueueNum)  <= 0)
+            throw new \Exception('已排队USDT数量和所选升级选项不匹配');
+        return bcsub($levelUsdtNum,$hasQueueNum);
+    }
 
     public function enter() {
         

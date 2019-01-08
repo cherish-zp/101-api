@@ -75,15 +75,15 @@ class UserFlow extends Base
     public static $queueStatus = 1;
 
     /**
-     * @param $uid 用户id
-     * @param $title  标题
-     * @param $beforeNum 之前数量
-     * @param $afterNum 之后数量
-     * @param $num 操作数量
-     * @param $cid 币种id
-     * @param $coinName 币种名称
-     * @param $resourceId 关联订单id
-     * @param $type 类型
+     * @param $uid |用户id
+     * @param $title  |标题
+     * @param $beforeNum |之前数量
+     * @param $afterNum |之后数量
+     * @param $num |操作数量
+     * @param $cid |币种id
+     * @param $coinName |币种名称
+     * @param $resourceId |关联订单id
+     * @param $type |类型
      * @return UserFlow|array|Model
      * @throws \Exception
      */
