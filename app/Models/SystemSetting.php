@@ -123,5 +123,23 @@ class SystemSetting extends Base
         return self::getFieldValue($field);
     }
 
+    /**
+     * 获取积分币种
+     * @return mixed
+     * @throws \Exception
+     */
+    public static function getIntegralCoin()
+    {
+        return self::getFieldValue(self::$integralCoinName);
+    }
 
+    /**
+     * 获取资产币种
+     * @return mixed
+     * @throws \Exception
+     */
+    public static function getAssetsCoin()
+    {
+        return self::getFieldValue(self::$assetsCoinName);
+    }
 }

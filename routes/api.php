@@ -39,5 +39,5 @@ Route::middleware(['jwt.api.auth','jwt.auth'])->namespace('Api')->group(function
     //用户进场
     Route::post('enter', 'EnterController@enter');
     //积分复投
-    Route::post('repeat','RepeatController@integralRepeat');
+    Route::post('repeat','RepeatController@index');
 });

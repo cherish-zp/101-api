@@ -61,7 +61,6 @@ class DynamicFreed implements ShouldQueue
             //UserInvite::where(['uid'=>$user->id])->
         }
 
-
         $data  = [
             'freed_assets_num'=>1,
             'before_integral'=>11,

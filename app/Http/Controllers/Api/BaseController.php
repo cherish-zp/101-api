@@ -7,7 +7,12 @@ use App\Http\Controllers\Controller;
 
 class BaseController extends Controller
 {
+    public $user;
 
+    public function __construct()
+    {
+        $this->user = \JWTAuth::user();
+    }
     protected $error;
 
     protected function success($data = [],$code = 200, $msg = 'success')

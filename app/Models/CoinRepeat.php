@@ -48,24 +48,25 @@ class CoinRepeat extends Base
      * @var int 待完成
      */
     public static $statusYes = 1;
+
     /**
      * @param $userId
-     * @param $repeatIntegral 用户复投积分
+     * @param $integral
+     * @param $assets
+     * @return CoinRepeat|Model
      * @throws \Exception
      */
-    public static function staticRelease($userId,$repeatIntegral)
+    public static function createData($userId,$integral,$assets)
     {
-        $queueCompleteAssetGain = SystemSetting::getFieldValue(SystemSetting::$queueCompleteAssetGainName);
-        $assets = bcmul($repeatIntegral,$queueCompleteAssetGain);
-
         $insertData = [
             'trade_no'  =>  getOrderTradeOn(),
             'uid'       =>  $userId,
-            'integral'  =>  $repeatIntegral,
+            'integral'  =>  $integral,
             'assets'    =>  $assets,
-            'status'    =>  self::$statusNo
         ];
-
-        CoinRepeat::create($insertData);
+        $coinRepeat = CoinRepeat::create($insertData);
+        if (!$coinRepeat)
+            throw new \Exception('复投记录操作失败');
+        return $coinRepeat;
     }
 }

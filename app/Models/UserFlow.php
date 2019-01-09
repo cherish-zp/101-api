@@ -73,9 +73,14 @@ class UserFlow extends Base
      * @var int 排队类型
      */
     public static $queueStatus = 1;
-
+    /**
+     * @var int 推荐类型
+     */
     public static $recommendReword = 2;
-
+    /**
+     * @var int 复投类型
+     */
+    public static $integralRepeat = 3;
     /**
      * @param $uid |用户id
      * @param $title  |标题

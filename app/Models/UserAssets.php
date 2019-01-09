@@ -125,7 +125,24 @@ class UserAssets extends Base
             'available'=>\DB::raw('available+'.$num)
         ]);
         if (!$res) {
-            throw new \Exception('推荐人资产增加失败');
+            throw new \Exception('user_assets + 操作失败');
+        }
+    }
+
+    /**
+     * 资产减少
+     * @param $uid
+     * @param $coinName
+     * @param $num
+     * @throws \Exception
+     */
+    public static function assetsReduce($uid,$coinName,$num)
+    {
+        $res = self::where(['uid'=>$uid,'coin_name'=>$coinName])->update([
+            'available'=>\DB::raw('available-'.$num)
+        ]);
+        if (!$res) {
+            throw new \Exception('user_assets - 操作失败');
         }
     }
 }
