@@ -24,6 +24,7 @@ use Emadadly\LaravelUuid\Uuids;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite whereUids($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserInvite uuid($uuid, $first = true)
  */
 class UserInvite extends Base
 {

@@ -34,6 +34,7 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CoinStaticFreed whereUid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CoinStaticFreed whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CoinStaticFreed uuid($uuid, $first = true)
  */
 class CoinStaticFreed extends Base
 {

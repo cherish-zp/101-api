@@ -79,7 +79,8 @@ class SystemSetting extends Base
     /**
      * @var str 资产少于投资金额的倍数名称
      */
-    public static $assetsLessInvestmentAmountMultiple = 'assets_less_investment amount_multiple';
+    public static $assetsLessInvestmentAmountMultiple = 'assets_less_investment_amount_multiple';
+    public static $recommendGetMaxLevel = 'recommend_get_max_level';
 
 
     /**

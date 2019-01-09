@@ -56,6 +56,8 @@ use Emadadly\LaravelUuid\Uuids;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string $lower_level_uids 邀请用户ids | 隔开
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereLowerLevelUids($value)
  */
 class User extends Authenticatable implements JWTSubject
 {

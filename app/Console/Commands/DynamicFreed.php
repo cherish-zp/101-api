@@ -12,6 +12,11 @@ class DynamicFreed extends Command
     protected $description = '动态释放的信息存入表中';
 
     /**
+     *
+     * vagrant@homestead:~/code/101-api$ php artisan queue:restart
+     * Broadcasting queue restart signal.
+     * vagrant@homestead:~/code/101-api$ php artisan queue:work redis --queue=dynamic_freed
+     *
      * Create a new command instace.
      *
      * @return void
@@ -36,7 +41,7 @@ class DynamicFreed extends Command
         $count = User::where(['is_out'=>1,'status'=>1])->count();
         $this->info('开始任务  ' . $count);
 
-        User::where(['is_out'=>1,'status'=>1])
+        User::where(['is_out'=>2,'status'=>1])
             ->select(['uid','lower_level_uids','level'])->chunk(2 , function($user) use (&$count){
             foreach ($user as $item) {
                 \App\Jobs\DynamicFreed::dispatch($item)->onQueue('dynamic_freed');
