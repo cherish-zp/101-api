@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use App\Events\LoginLogEvent;
 use App\Models\LoginLog;
-use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Request;

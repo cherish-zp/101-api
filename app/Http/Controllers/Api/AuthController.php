@@ -92,6 +92,7 @@ class AuthController extends BaseController
             if ($user->level > 0) {
                 CoinStaticFreed::staticFreed($uid);
             }
+            //动态释放
 
             return $this->respondWithToken($token);
         } catch (\Exception $e) {
