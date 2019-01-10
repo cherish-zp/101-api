@@ -35,6 +35,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CoinDynamicFreed whereUid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CoinDynamicFreed whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string|null $body 数据
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CoinDynamicFreed whereBody($value)
  */
 class CoinDynamicFreed extends Model
 {
