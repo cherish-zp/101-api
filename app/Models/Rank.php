@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Emadadly\LaravelUuid\Uuids;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -30,6 +31,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Rank extends Model
 {
+    use Uuids;
     protected $table = 'rank';
     protected $guarded = [];
     protected $hidden = ['uid'];
@@ -41,13 +43,14 @@ class Rank extends Model
      * @return Rank|Model
      * @throws \Exception
      */
-    public static function createData($uid,$effect,$assets)
+    public static function updateOrCreateData($uid,$effect,$assets)
     {
-        $rank = self::create([
-            'uid'=>$uid,
-            'effect'=>$effect,
-            'assets'=>$assets
-        ]);
+        $rank = self::updateOrCreate(
+            ['uid'=>$uid],
+            [
+                'effect'=>\DB::raw('effect+'.$effect)
+                ,'assets'=>$assets
+            ]);
         if (!$rank)
             throw new \Exception('公排操作失败');
         return $rank;

@@ -64,7 +64,7 @@ class RepeatController extends BaseController
                     //添加业绩记录表
                     Effect::createData($inviteUid,$coinRepeat->trade_no,$repeatRequest->integral,Effect::TYPE_REPEAT);
                     //数据插入公排表总表
-                    Rank::createData($inviteUid,$repeatRequest->integral,$inviteUidAssets->available);
+                    Rank::updateOrCreateData($inviteUid,$repeatRequest->integral,$inviteUidAssets->available);
                 }
 
             DB::commit();
